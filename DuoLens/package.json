@@ -15,8 +15,10 @@
     "expo-haptics": "~13.0.1",
     "expo-splash-screen": "~0.27.5",
     "expo-status-bar": "~1.12.1",
+    "ionicons": "^7.4.0",
     "react": "18.2.0",
-    "react-native": "0.74.2"
+    "react-native": "0.74.2",
+    "undefined": "@expo/vector-icons/Ionicons"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

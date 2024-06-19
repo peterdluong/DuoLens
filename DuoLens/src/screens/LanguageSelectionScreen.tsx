@@ -20,6 +20,7 @@ export const LanguageSelectionScreen = () => {
           <Text style={styles.text}>
             Select a language for a spooky challenge!
           </Text>
+          <View style={{ marginBottom: 10 }}></View>
           {languagePressableList}
         </View>
       </ScrollView>
