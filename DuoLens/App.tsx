@@ -9,6 +9,7 @@ import { useCallback } from "react";
 import * as SplashScreen from "expo-splash-screen";
 import { LanguageSelectionScreen } from "./src/screens/LanguageSelectionScreen";
 import { ChallengeScreen } from "./src/screens/ChallengeScreen";
+import { Navigation } from "./src/navigation";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -32,7 +33,8 @@ export default function App() {
   return (
     <View onLayout={onLayoutRootView} style={[styles.container, { flex: 1 }]}>
       {/* <LanguageSelectionScreen /> */}
-      <ChallengeScreen />
+      {/* <ChallengeScreen /> */}
+      <Navigation />
       <StatusBar style="auto" />
     </View>
   );

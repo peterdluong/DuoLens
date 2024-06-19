@@ -7,6 +7,7 @@ import {
   Text,
 } from "react-native";
 import * as Haptics from "expo-haptics";
+import { useNavigation } from "@react-navigation/native";
 
 type LanguagePressableSmallProps = {
   languageName?: string;
@@ -15,6 +16,7 @@ type LanguagePressableSmallProps = {
 export const LanguagePressableSmall = (props: LanguagePressableSmallProps) => {
   const { languageName = "English" } = props;
   const [scale] = useState(new Animated.Value(1));
+  const navigation = useNavigation();
 
   const handlePressIn = () => {
     Animated.spring(scale, {
@@ -38,6 +40,7 @@ export const LanguagePressableSmall = (props: LanguagePressableSmallProps) => {
       unstable_pressDelay={100}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
+      onPress={() => navigation.navigate("ChallengeScreen")}
     >
       <Animated.View style={[styles.pressableView, { transform: [{ scale }] }]}>
         <Text style={styles.pressableText}>{languageName}</Text>

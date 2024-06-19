@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "DuoLens",
-    "slug": "DuoLens",
+    "slug": "duolens",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -25,6 +25,18 @@
     },
     "plugins": [
       "expo-font"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "ef01e7da-9ee7-4250-adc4-8ac01ded1ee2"
+      }
+    },
+    "owner": "p_datty",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/ef01e7da-9ee7-4250-adc4-8ac01ded1ee2"
+    }
   }
 }

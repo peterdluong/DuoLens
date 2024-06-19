@@ -2,7 +2,7 @@ import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { DuoLensPrimaryColors } from "../styles/BrandColors";
 
-export const ChallengeScreen = () => {
+export const ChallengeScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.viewContainer}>
       <View style={styles.headerContainer}>
