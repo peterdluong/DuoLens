@@ -22,7 +22,8 @@
     "ionicons": "^7.4.0",
     "react": "18.2.0",
     "react-native": "0.74.2",
-    "undefined": "@expo/vector-icons/Ionicons"
+    "undefined": "@expo/vector-icons/Ionicons",
+    "react-native-svg": "15.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

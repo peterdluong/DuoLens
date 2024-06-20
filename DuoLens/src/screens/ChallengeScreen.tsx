@@ -1,8 +1,10 @@
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { DuoLensPrimaryColors } from "../styles/BrandColors";
+import { WithLocalSvg } from "react-native-svg/css";
 
-export const ChallengeScreen = ({ navigation }) => {
+export const ChallengeScreen = ({}) => {
+  const duoOwlAvatar = require("../../assets/duo-owl-angry.svg");
   return (
     <SafeAreaView style={styles.viewContainer}>
       <View style={styles.headerContainer}>
@@ -26,8 +28,22 @@ export const ChallengeScreen = ({ navigation }) => {
           Translate this sentence, dumbo
         </Text>
       </View>
-      <View style={styles.translatePromptContainer}></View>
-      <View style={styles.ruledContainer}></View>
+      <View style={styles.translatePromptContainer}>
+        <View style={styles.translateAvatarContainer}>
+          <WithLocalSvg asset={duoOwlAvatar} height={"85%"} width={"90%"} />
+        </View>
+        <View style={styles.translateTextContainer}>
+          <View style={styles.textSpeechBubble}>
+            <Text style={styles.foreignText}>Dōmo arigatō misutā Robotto.</Text>
+          </View>
+        </View>
+      </View>
+      <View style={styles.ruledContainer}>
+        <View style={styles.ruledLine}></View>
+        <View style={styles.ruledLine}></View>
+        <View style={styles.ruledLine}></View>
+        <View style={styles.ruledLine}></View>
+      </View>
       <View style={styles.wordSelectionContainer}></View>
       <View style={styles.checkButtonContainer}>
         <Pressable style={styles.checkButton}>
@@ -102,10 +118,45 @@ const styles = StyleSheet.create({
   translatePromptContainer: {
     // borderWidth: 1,
     height: "25%",
+    flexDirection: "row",
+  },
+  translateAvatarContainer: {
+    width: "40%",
+    height: "100%",
+    alignItems: "flex-end",
+    justifyContent: "flex-end",
+  },
+  translateTextContainer: {
+    // backgroundColor: "gray",
+    flex: 1,
+    height: "100%",
+    justifyContent: "center",
+    paddingLeft: "2%",
+  },
+  textSpeechBubble: {
+    width: "90%",
+    borderWidth: 2,
+    borderRadius: "15%",
+    borderColor: "#E6E6E6",
+    padding: "7.5%",
+    justifyContent: "center",
+  },
+  foreignText: {
+    fontFamily: "Nunito_500Medium",
+    fontSize: 16,
   },
   ruledContainer: {
+    flexDirection: "column",
+    justifyContent: "space-between",
     // borderWidth: 1,
     height: "24%",
+    paddingHorizontal: "5%",
+  },
+  ruledLine: {
+    backgroundColor: "#E6E6E6",
+    height: 2,
+    width: "100%",
+    borderRadius: "50%",
   },
   wordSelectionContainer: {
     // borderWidth: 1,

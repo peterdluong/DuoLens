@@ -2,12 +2,12 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
 import { useFonts } from "expo-font";
 import {
+  Nunito_500Medium,
   Nunito_800ExtraBold,
   Nunito_900Black,
 } from "@expo-google-fonts/nunito";
 import { useCallback } from "react";
 import * as SplashScreen from "expo-splash-screen";
-import { LanguageSelectionScreen } from "./src/screens/LanguageSelectionScreen";
 import { ChallengeScreen } from "./src/screens/ChallengeScreen";
 import { Navigation } from "./src/navigation";
 
@@ -16,6 +16,7 @@ SplashScreen.preventAutoHideAsync();
 export default function App() {
   const [fontsLoaded, fontError] = useFonts({
     "Feather-Bold": require("./assets/fonts/feather_bold.ttf"),
+    Nunito_500Medium,
     Nunito_800ExtraBold,
     Nunito_900Black,
   });
@@ -32,7 +33,6 @@ export default function App() {
 
   return (
     <View onLayout={onLayoutRootView} style={[styles.container, { flex: 1 }]}>
-      {/* <LanguageSelectionScreen /> */}
       {/* <ChallengeScreen /> */}
       <Navigation />
       <StatusBar style="auto" />

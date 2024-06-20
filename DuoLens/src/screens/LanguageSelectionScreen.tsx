@@ -3,7 +3,7 @@ import { DuoLensPrimaryColors } from "../styles/BrandColors";
 import { LanguagePressableSmall } from "../components/LanguagePressableSmall";
 import { SupportedLanguages } from "../data/SupportedLanguages";
 
-export const LanguageSelectionScreen = ({ navigation }) => {
+export const LanguageSelectionScreen = ({}) => {
   const languagePressableList = SupportedLanguages.sort().map((item) => (
     <LanguagePressableSmall
       languageName={item}
