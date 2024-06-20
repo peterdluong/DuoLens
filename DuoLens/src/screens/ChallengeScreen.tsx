@@ -5,6 +5,17 @@ import { WithLocalSvg } from "react-native-svg/css";
 
 export const ChallengeScreen = ({}) => {
   const duoOwlAvatar = require("../../assets/duo-owl-angry.svg");
+
+  const translationText = "You are very stupid and you smell like toe fungus";
+  const wordArray = translationText.trim().split(" ");
+
+  const wordSelectList = wordArray.map((item, index) => (
+    <View style={styles.wordSelect} key={index}>
+      <Text style={styles.wordSelectText} key={index}>
+        {item}
+      </Text>
+    </View>
+  ));
   return (
     <SafeAreaView style={styles.viewContainer}>
       <View style={styles.headerContainer}>
@@ -44,7 +55,7 @@ export const ChallengeScreen = ({}) => {
         <View style={styles.ruledLine}></View>
         <View style={styles.ruledLine}></View>
       </View>
-      <View style={styles.wordSelectionContainer}></View>
+      <View style={styles.wordSelectionContainer}>{wordSelectList}</View>
       <View style={styles.checkButtonContainer}>
         <Pressable style={styles.checkButton}>
           <Text style={styles.checkButtonText}> CHECK</Text>
@@ -160,8 +171,34 @@ const styles = StyleSheet.create({
   },
   wordSelectionContainer: {
     // borderWidth: 1,
-    height: "28%",
+    flexDirection: "row",
     flex: 1,
+    flexWrap: "wrap",
+    width: "100%",
+    alignContent: "center",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: "5%",
+    overflow: "hidden",
+  },
+  wordSelect: {
+    paddingVertical: "2.5%",
+    paddingHorizontal: "2%",
+    borderRadius: "12.5%",
+    borderColor: "#E6E6E6",
+    borderWidth: 2,
+    marginHorizontal: 3,
+    marginVertical: 5,
+    backgroundColor: "white",
+
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 1,
+    shadowColor: "#E6E6E6",
+    shadowRadius: 0,
+  },
+  wordSelectText: {
+    fontFamily: "Nunito_400Regular",
+    fontSize: 20,
   },
   checkButtonContainer: {
     height: "8%",
@@ -169,16 +206,16 @@ const styles = StyleSheet.create({
   },
   checkButton: {
     height: 48,
-    // backgroundColor: "#E6E6E6",
-    backgroundColor: DuoLensPrimaryColors.feathergreen,
+    backgroundColor: "#E6E6E6",
+    // backgroundColor: DuoLensPrimaryColors.feathergreen,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: "10%",
   },
   checkButtonText: {
     fontFamily: "Nunito_800ExtraBold",
-    // color: "#AFAFAF",
-    color: "white",
+    color: "#AFAFAF",
+    // color: "white",
     fontSize: 16,
   },
 });

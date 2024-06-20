@@ -2,6 +2,7 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
 import { useFonts } from "expo-font";
 import {
+  Nunito_400Regular,
   Nunito_500Medium,
   Nunito_800ExtraBold,
   Nunito_900Black,
@@ -16,6 +17,7 @@ SplashScreen.preventAutoHideAsync();
 export default function App() {
   const [fontsLoaded, fontError] = useFonts({
     "Feather-Bold": require("./assets/fonts/feather_bold.ttf"),
+    Nunito_400Regular,
     Nunito_500Medium,
     Nunito_800ExtraBold,
     Nunito_900Black,
