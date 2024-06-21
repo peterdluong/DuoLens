@@ -1,22 +1,23 @@
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { DuoLensPrimaryColors } from "../styles/BrandColors";
+import {
+  DuoLensNeutralColors,
+  DuoLensPrimaryColors,
+} from "../styles/BrandColors";
 import { WithLocalSvg } from "react-native-svg/css";
 import { ProgressBar } from "../components/ProgressBar";
 import { ChallengePageButton } from "../components/ChallengePageButton";
+import { WordbankWord } from "../components/WordbankWord";
 
 export const ChallengeScreen = ({}) => {
   const duoOwlAvatar = require("../../assets/duo-owl-angry.svg");
 
-  const translationText = "You are very stupid and you smell like toe fungus";
+  const translationText =
+    "You are very stupid and you smell like toe fungus that's fuckin' grody";
   const wordArray = translationText.trim().split(" ");
 
   const wordSelectList = wordArray.map((item, index) => (
-    <View style={styles.wordSelect} key={index}>
-      <Text style={styles.wordSelectText} key={index}>
-        {item}
-      </Text>
-    </View>
+    <WordbankWord word={item} key={index} />
   ));
   return (
     <SafeAreaView style={styles.viewContainer}>
@@ -64,7 +65,7 @@ export const ChallengeScreen = ({}) => {
 const styles = StyleSheet.create({
   viewContainer: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: DuoLensNeutralColors.snow,
   },
   headerContainer: {
     flexDirection: "row",
@@ -123,7 +124,7 @@ const styles = StyleSheet.create({
     width: "90%",
     borderWidth: 2,
     borderRadius: "15%",
-    borderColor: "#E6E6E6",
+    borderColor: DuoLensNeutralColors.swan,
     padding: "7.5%",
     justifyContent: "center",
   },
@@ -139,7 +140,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: "5%",
   },
   ruledLine: {
-    backgroundColor: "#E6E6E6",
+    backgroundColor: DuoLensNeutralColors.swan,
     height: 2,
     width: "100%",
     borderRadius: "50%",
@@ -155,25 +156,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: "5%",
     overflow: "hidden",
-  },
-  wordSelect: {
-    paddingVertical: "2.5%",
-    paddingHorizontal: "2%",
-    borderRadius: "12.5%",
-    borderColor: "#E6E6E6",
-    borderWidth: 2,
-    marginHorizontal: 3,
-    marginVertical: 5,
-    backgroundColor: "white",
-
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 1,
-    shadowColor: "#E6E6E6",
-    shadowRadius: 0,
-  },
-  wordSelectText: {
-    fontFamily: "Nunito_400Regular",
-    fontSize: 20,
   },
   checkButtonContainer: {
     paddingHorizontal: "5%",

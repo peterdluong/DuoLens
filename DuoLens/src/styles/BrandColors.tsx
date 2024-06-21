@@ -13,4 +13,13 @@ const DuoLensSecondaryColors = {
   "#ffbba2": "#ffbba2",
 };
 
-export { DuoLensPrimaryColors, DuoLensSecondaryColors };
+const DuoLensNeutralColors = {
+  eel: "#4b4b4b",
+  wolf: "#777777",
+  hare: "#afafaf",
+  swan: "#e5e5e5",
+  polar: "#f7f7f7",
+  snow: "#ffffff",
+};
+
+export { DuoLensPrimaryColors, DuoLensSecondaryColors, DuoLensNeutralColors };

@@ -1,4 +1,5 @@
 import { DimensionValue, StyleSheet, View } from "react-native";
+import { DuoLensNeutralColors } from "../styles/BrandColors";
 
 const clampValue = (value: number, min: number, max: number) => {
   return Math.min(Math.max(value, min), max);
@@ -27,7 +28,7 @@ const styles = StyleSheet.create({
   progressBar: {
     height: 18,
     width: "100%",
-    backgroundColor: "#E6E6E6",
+    backgroundColor: DuoLensNeutralColors.swan,
     borderRadius: "20%",
   },
   progressBarProgress: {

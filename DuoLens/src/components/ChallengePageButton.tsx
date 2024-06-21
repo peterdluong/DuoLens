@@ -1,5 +1,8 @@
 import { Animated, Easing, Pressable, StyleSheet, Text } from "react-native";
-import { DuoLensPrimaryColors } from "../styles/BrandColors";
+import {
+  DuoLensNeutralColors,
+  DuoLensPrimaryColors,
+} from "../styles/BrandColors";
 import * as Haptics from "expo-haptics";
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
@@ -55,12 +58,12 @@ export const ChallengePageButton = (props: ChallengePageButtonProps) => {
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         onPress={() => {
-          // navigation.navigate("LanguageSelectionScreen");
+          navigation.navigate("CameraScreen");
         }}
       >
         <Animated.View
           style={[
-            styles.checkButton,
+            styles.challengePageButton,
             {
               backgroundColor: DuoLensPrimaryColors.feathergreen,
               marginBottom: offset,
@@ -72,7 +75,12 @@ export const ChallengePageButton = (props: ChallengePageButtonProps) => {
             },
           ]}
         >
-          <Text style={[styles.checkButtonText, { color: "white" }]}>
+          <Text
+            style={[
+              styles.challengePageButtonText,
+              { color: DuoLensNeutralColors.snow },
+            ]}
+          >
             {text.toUpperCase()}
           </Text>
         </Animated.View>
@@ -82,11 +90,16 @@ export const ChallengePageButton = (props: ChallengePageButtonProps) => {
     return (
       <Pressable
         style={[
-          styles.checkButton,
-          { backgroundColor: "#E6E6E6", marginTop: 4 },
+          styles.challengePageButton,
+          { backgroundColor: DuoLensNeutralColors.swan, marginTop: 4 },
         ]}
       >
-        <Text style={[styles.checkButtonText, { color: "#AFAFAF" }]}>
+        <Text
+          style={[
+            styles.challengePageButtonText,
+            { color: DuoLensNeutralColors.hare },
+          ]}
+        >
           {text.toUpperCase()}
         </Text>
       </Pressable>
@@ -95,13 +108,13 @@ export const ChallengePageButton = (props: ChallengePageButtonProps) => {
 };
 
 const styles = StyleSheet.create({
-  checkButton: {
+  challengePageButton: {
     height: 44,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: "10%",
   },
-  checkButtonText: {
+  challengePageButtonText: {
     fontFamily: "Nunito_800ExtraBold",
     fontSize: 16,
   },

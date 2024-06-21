@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import * as Haptics from "expo-haptics";
 import { useNavigation } from "@react-navigation/native";
+import { DuoLensNeutralColors } from "../styles/BrandColors";
 
 type LanguagePressableSmallProps = {
   languageName?: string;
@@ -53,7 +54,7 @@ const styles = StyleSheet.create({
   pressableView: {
     width: Dimensions.get("window").width * 0.9,
     height: 50,
-    backgroundColor: "white",
+    backgroundColor: DuoLensNeutralColors.snow,
     borderRadius: 15,
     justifyContent: "center",
     alignItems: "center",

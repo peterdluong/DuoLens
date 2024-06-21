@@ -2,6 +2,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { LanguageSelectionScreen } from "../screens/LanguageSelectionScreen";
 import { ChallengeScreen } from "../screens/ChallengeScreen";
+import { CameraScreen } from "../screens/CameraScreen";
 
 export const Navigation = () => {
   return (
@@ -24,6 +25,7 @@ const RootNavigator = () => {
         component={LanguageSelectionScreen}
       />
       <NativeStack.Screen name="ChallengeScreen" component={ChallengeScreen} />
+      <NativeStack.Screen name="CameraScreen" component={CameraScreen} />
     </NativeStack.Navigator>
   );
 };

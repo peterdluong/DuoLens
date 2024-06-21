@@ -1,5 +1,8 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { DuoLensPrimaryColors } from "../styles/BrandColors";
+import {
+  DuoLensNeutralColors,
+  DuoLensPrimaryColors,
+} from "../styles/BrandColors";
 import { LanguagePressableSmall } from "../components/LanguagePressableSmall";
 import { SupportedLanguages } from "../data/SupportedLanguages";
 
@@ -39,7 +42,7 @@ const styles = StyleSheet.create({
     marginVertical: 60,
   },
   text: {
-    color: "white",
+    color: DuoLensNeutralColors.snow,
     fontFamily: "Feather-Bold",
     textAlign: "center",
     fontSize: 32,
