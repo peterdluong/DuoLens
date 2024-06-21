@@ -2,6 +2,8 @@ import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { DuoLensPrimaryColors } from "../styles/BrandColors";
 import { WithLocalSvg } from "react-native-svg/css";
+import { ProgressBar } from "../components/ProgressBar";
+import { ChallengePageButton } from "../components/ChallengePageButton";
 
 export const ChallengeScreen = ({}) => {
   const duoOwlAvatar = require("../../assets/duo-owl-angry.svg");
@@ -21,11 +23,7 @@ export const ChallengeScreen = ({}) => {
       <View style={styles.headerContainer}>
         <Ionicons name="settings-outline" size={30} color="#A6A6A7" />
         <View style={styles.progressBarContainer}>
-          <View style={styles.progressBar}>
-            <View style={styles.progressBarProgress}>
-              <View style={styles.progressBarProgressShine} />
-            </View>
-          </View>
+          <ProgressBar percentage={50} />
         </View>
         <Ionicons
           name="heart"
@@ -57,9 +55,7 @@ export const ChallengeScreen = ({}) => {
       </View>
       <View style={styles.wordSelectionContainer}>{wordSelectList}</View>
       <View style={styles.checkButtonContainer}>
-        <Pressable style={styles.checkButton}>
-          <Text style={styles.checkButtonText}> CHECK</Text>
-        </Pressable>
+        <ChallengePageButton enabled={true} />
       </View>
     </SafeAreaView>
   );
@@ -83,27 +79,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 24,
-  },
-  progressBar: {
-    height: 18,
-    width: "100%",
-    backgroundColor: "#E6E6E6",
-    borderRadius: "20%",
-  },
-  progressBarProgress: {
-    height: "100%",
-    width: "50%",
-    backgroundColor: "#79CA3D",
-    borderRadius: "20%",
-    paddingHorizontal: 10,
-    alignItems: "center",
-  },
-  progressBarProgressShine: {
-    height: "30%",
-    width: "100%",
-    backgroundColor: "#90D453",
-    borderRadius: "20%",
-    marginTop: 18 * 0.25,
   },
   livesText: {
     fontFamily: "Nunito_800ExtraBold",
@@ -201,21 +176,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   checkButtonContainer: {
-    height: "8%",
     paddingHorizontal: "5%",
-  },
-  checkButton: {
-    height: 48,
-    backgroundColor: "#E6E6E6",
-    // backgroundColor: DuoLensPrimaryColors.feathergreen,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: "10%",
-  },
-  checkButtonText: {
-    fontFamily: "Nunito_800ExtraBold",
-    color: "#AFAFAF",
-    // color: "white",
-    fontSize: 16,
+    paddingBottom: 10,
   },
 });
