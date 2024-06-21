@@ -23,7 +23,9 @@
     "react": "18.2.0",
     "react-native": "0.74.2",
     "undefined": "@expo/vector-icons/Ionicons",
-    "react-native-svg": "15.2.0"
+    "react-native-svg": "15.2.0",
+    "expo-camera": "~15.0.11",
+    "expo-image": "~1.12.12"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
