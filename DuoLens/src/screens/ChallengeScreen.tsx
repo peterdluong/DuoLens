@@ -6,11 +6,13 @@ import {
 } from "../styles/BrandColors";
 import { WithLocalSvg } from "react-native-svg/css";
 import { ProgressBar } from "../components/ProgressBar";
-import { ChallengePageButton } from "../components/ChallengePageButton";
+import { BottomButton } from "../components/BottomButton";
 import { WordbankWord } from "../components/WordbankWord";
 import { randomizeArray } from "../helper/helpers";
+import { useNavigation } from "@react-navigation/native";
 
 export const ChallengeScreen = ({}) => {
+  const navigation = useNavigation();
   const duoOwlAvatar = require("../../assets/duo-owl-angry.svg");
 
   const translationText =
@@ -58,10 +60,10 @@ export const ChallengeScreen = ({}) => {
       </View>
       <View style={styles.wordSelectionContainer}>{wordSelectList}</View>
       <View style={styles.checkButtonContainer}>
-        <ChallengePageButton
+        <BottomButton
           enabled={true}
           type="green"
-          navScreen="CameraScreen"
+          onPressAction={() => navigation.navigate("CameraScreen")}
         />
       </View>
     </SafeAreaView>

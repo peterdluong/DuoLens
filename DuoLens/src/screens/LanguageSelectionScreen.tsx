@@ -5,12 +5,15 @@ import {
 } from "../styles/BrandColors";
 import { LanguagePressableSmall } from "../components/LanguagePressableSmall";
 import { SupportedLanguages } from "../data/SupportedLanguages";
-import { ChallengePageButton } from "../components/ChallengePageButton";
+import { BottomButton } from "../components/BottomButton";
+import { useNavigation } from "@react-navigation/native";
 
 export const LanguageSelectionScreen = ({}) => {
+  const navigation = useNavigation();
   const languagePressableList = SupportedLanguages.sort().map((item) => (
     <LanguagePressableSmall
       languageName={item}
+      selected={false}
       key={item}
     ></LanguagePressableSmall>
   ));
@@ -28,9 +31,11 @@ export const LanguageSelectionScreen = ({}) => {
       <View
         style={{
           flex: 1,
-          borderWidth: 3,
-          marginHorizontal: 10,
-          marginVertical: 20,
+          borderTopWidth: 2,
+          borderBottomWidth: 2,
+          marginTop: 18,
+          marginBottom: 14,
+          backgroundColor: DuoLensNeutralColors.snow,
         }}
       >
         <ScrollView contentContainerStyle={[styles.container]}>
@@ -40,12 +45,12 @@ export const LanguageSelectionScreen = ({}) => {
           </View>
         </ScrollView>
       </View>
-      <View style={styles.checkButtonContainer}>
-        <ChallengePageButton
+      <View style={styles.confirmButtonContainer}>
+        <BottomButton
           enabled={true}
           text="Confirm"
           type="orange"
-          navScreen="ChallengeScreen"
+          onPressAction={() => navigation.navigate("ChallengeScreen")}
         />
       </View>
     </SafeAreaView>
@@ -54,13 +59,13 @@ export const LanguageSelectionScreen = ({}) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "transparent",
+    backgroundColor: DuoLensNeutralColors.snow,
   },
   viewContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    marginVertical: 4,
+    marginBottom: 10,
   },
   headerText: {
     color: DuoLensNeutralColors.snow,
@@ -80,7 +85,7 @@ const styles = StyleSheet.create({
   duolingoGreen: {
     backgroundColor: DuoLensPrimaryColors.feathergreen,
   },
-  checkButtonContainer: {
+  confirmButtonContainer: {
     paddingHorizontal: "5%",
     paddingBottom: 10,
   },

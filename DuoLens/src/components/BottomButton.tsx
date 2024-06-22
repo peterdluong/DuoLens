@@ -4,26 +4,26 @@ import {
   DuoLensPrimaryColors,
 } from "../styles/BrandColors";
 import * as Haptics from "expo-haptics";
-import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 
-type ChallengePageButtonProps = {
+type BottomButtonProps = {
   enabled: boolean;
   text?: string;
   type: string;
-  navScreen: string;
+  onPressAction(): any;
 };
 
-export const ChallengePageButton = (props: ChallengePageButtonProps) => {
+export const BottomButton = (props: BottomButtonProps) => {
   const {
     enabled = false,
     text = "CHECK",
     type = "green",
-    navScreen = "CameraScreen",
+    onPressAction = () => {
+      alert("Dumbo");
+    },
   } = props;
   const [offset] = useState(new Animated.Value(4));
   const [topMargin] = useState(new Animated.Value(0));
-  const navigation = useNavigation();
 
   const handlePressIn = () => {
     Animated.timing(offset, {
@@ -64,13 +64,11 @@ export const ChallengePageButton = (props: ChallengePageButtonProps) => {
       <Pressable
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
-        onPress={() => {
-          navigation.navigate(navScreen);
-        }}
+        onPress={onPressAction}
       >
         <Animated.View
           style={[
-            styles.challengePageButton,
+            styles.bottomButton,
             {
               backgroundColor:
                 type == "green" ? DuoLensPrimaryColors.feathergreen : "#ffc200",
@@ -85,7 +83,7 @@ export const ChallengePageButton = (props: ChallengePageButtonProps) => {
         >
           <Text
             style={[
-              styles.challengePageButtonText,
+              styles.bottomButtonText,
               { color: type == "green" ? "white" : "black" },
             ]}
           >
@@ -98,13 +96,13 @@ export const ChallengePageButton = (props: ChallengePageButtonProps) => {
     return (
       <Pressable
         style={[
-          styles.challengePageButton,
+          styles.bottomButton,
           { backgroundColor: DuoLensNeutralColors.swan, marginTop: 4 },
         ]}
       >
         <Text
           style={[
-            styles.challengePageButtonText,
+            styles.bottomButtonText,
             { color: DuoLensNeutralColors.hare },
           ]}
         >
@@ -116,13 +114,13 @@ export const ChallengePageButton = (props: ChallengePageButtonProps) => {
 };
 
 const styles = StyleSheet.create({
-  challengePageButton: {
+  bottomButton: {
     height: 44,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: "10%",
   },
-  challengePageButtonText: {
+  bottomButtonText: {
     fontFamily: "Nunito_800ExtraBold",
     fontSize: 16,
   },
