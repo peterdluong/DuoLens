@@ -1,9 +1,6 @@
 import { DimensionValue, StyleSheet, View } from "react-native";
 import { DuoLensNeutralColors } from "../styles/BrandColors";
-
-const clampValue = (value: number, min: number, max: number) => {
-  return Math.min(Math.max(value, min), max);
-};
+import { clampValue } from "../helper/helpers";
 
 type ProgressBarProps = {
   percentage: number;

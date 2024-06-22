@@ -8,13 +8,15 @@ import { WithLocalSvg } from "react-native-svg/css";
 import { ProgressBar } from "../components/ProgressBar";
 import { ChallengePageButton } from "../components/ChallengePageButton";
 import { WordbankWord } from "../components/WordbankWord";
+import { randomizeArray } from "../helper/helpers";
 
 export const ChallengeScreen = ({}) => {
   const duoOwlAvatar = require("../../assets/duo-owl-angry.svg");
 
   const translationText =
     "You are very stupid and you smell like toe fungus that's fuckin' grody";
-  const wordArray = translationText.trim().split(" ");
+  let wordArray = translationText.trim().split(" ");
+  wordArray = randomizeArray(wordArray);
 
   const wordSelectList = wordArray.map((item, index) => (
     <WordbankWord word={item} key={index} />
@@ -56,7 +58,11 @@ export const ChallengeScreen = ({}) => {
       </View>
       <View style={styles.wordSelectionContainer}>{wordSelectList}</View>
       <View style={styles.checkButtonContainer}>
-        <ChallengePageButton enabled={true} />
+        <ChallengePageButton
+          enabled={true}
+          type="green"
+          navScreen="CameraScreen"
+        />
       </View>
     </SafeAreaView>
   );

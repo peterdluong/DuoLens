@@ -10,10 +10,17 @@ import { useState } from "react";
 type ChallengePageButtonProps = {
   enabled: boolean;
   text?: string;
+  type: string;
+  navScreen: string;
 };
 
 export const ChallengePageButton = (props: ChallengePageButtonProps) => {
-  const { enabled = false, text = "CHECK" } = props;
+  const {
+    enabled = false,
+    text = "CHECK",
+    type = "green",
+    navScreen = "CameraScreen",
+  } = props;
   const [offset] = useState(new Animated.Value(4));
   const [topMargin] = useState(new Animated.Value(0));
   const navigation = useNavigation();
@@ -58,19 +65,20 @@ export const ChallengePageButton = (props: ChallengePageButtonProps) => {
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         onPress={() => {
-          navigation.navigate("CameraScreen");
+          navigation.navigate(navScreen);
         }}
       >
         <Animated.View
           style={[
             styles.challengePageButton,
             {
-              backgroundColor: DuoLensPrimaryColors.feathergreen,
+              backgroundColor:
+                type == "green" ? DuoLensPrimaryColors.feathergreen : "#ffc200",
               marginBottom: offset,
               marginTop: topMargin,
               shadowOffset: { width: 0, height: offset },
               shadowOpacity: 1,
-              shadowColor: "#6CA530",
+              shadowColor: type == "green" ? "#6CA530" : "#f49000",
               shadowRadius: 0,
             },
           ]}
@@ -78,7 +86,7 @@ export const ChallengePageButton = (props: ChallengePageButtonProps) => {
           <Text
             style={[
               styles.challengePageButtonText,
-              { color: DuoLensNeutralColors.snow },
+              { color: type == "green" ? "white" : "black" },
             ]}
           >
             {text.toUpperCase()}
