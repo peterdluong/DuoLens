@@ -8,12 +8,7 @@ import {
   Text,
 } from "react-native";
 import * as Haptics from "expo-haptics";
-import { useNavigation } from "@react-navigation/native";
-import {
-  DuoLensNeutralColors,
-  DuoLensPrimaryColors,
-  DuoLensSecondaryColors,
-} from "../styles/BrandColors";
+import { DuoLensNeutralColors } from "../styles/BrandColors";
 
 type LanguagePressableSmallProps = {
   languageName?: string;

@@ -8,15 +8,20 @@ import { WithLocalSvg } from "react-native-svg/css";
 import { ProgressBar } from "../components/ProgressBar";
 import { BottomButton } from "../components/BottomButton";
 import { WordbankWord } from "../components/WordbankWord";
-import { randomizeArray } from "../helper/helpers";
+import { getRandomInt, randomizeArray } from "../helper/helpers";
 import { useNavigation } from "@react-navigation/native";
+import { translation_database } from "./../data/TranslationDatabase.json";
 
-export const ChallengeScreen = ({}) => {
+export const ChallengeScreen = ({ route }) => {
   const navigation = useNavigation();
   const duoOwlAvatar = require("../../assets/duo-owl-angry.svg");
+  const { selectedLanguage } = route.params;
+
+  const randomChallengeTexIndex = getRandomInt(0, translation_database.length);
 
   const translationText =
-    "You are very stupid and you smell like toe fungus that's fuckin' grody";
+    // "You are very stupid and you smell like toe fungus that's fuckin' grody";
+    translation_database[randomChallengeTexIndex].English;
   let wordArray = translationText.trim().split(" ");
   wordArray = randomizeArray(wordArray);
 
@@ -48,7 +53,10 @@ export const ChallengeScreen = ({}) => {
         </View>
         <View style={styles.translateTextContainer}>
           <View style={styles.textSpeechBubble}>
-            <Text style={styles.foreignText}>Dōmo arigatō misutā Robotto.</Text>
+            <Text style={styles.foreignText}>
+              {/* {`You selected ${selectedLanguage}\n`}Dōmo arigatō misutā Robotto. */}
+              {translation_database[randomChallengeTexIndex][selectedLanguage]}
+            </Text>
           </View>
         </View>
       </View>
@@ -63,7 +71,8 @@ export const ChallengeScreen = ({}) => {
         <BottomButton
           enabled={true}
           type="green"
-          onPressAction={() => navigation.navigate("CameraScreen")}
+          //   onPressAction={() => navigation.navigate("CameraScreen")}
+          onPressAction={() => alert(randomChallengeTexIndex)}
         />
       </View>
     </SafeAreaView>

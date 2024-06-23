@@ -2,7 +2,6 @@ import {
   FlatList,
   Pressable,
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -25,8 +24,8 @@ export const LanguageSelectionScreen = ({}) => {
   };
 
   return (
-    <SafeAreaView style={[styles.duolingoGreen, { flex: 1 }]}>
-      <View style={{ backgroundColor: DuoLensPrimaryColors.feathergreen }}>
+    <SafeAreaView style={styles.safeAreaContainer}>
+      <View>
         <Pressable
           onPress={() => setSelected(null)}
           style={{ alignSelf: "center" }}
@@ -39,21 +38,10 @@ export const LanguageSelectionScreen = ({}) => {
           Select a language for a spooky challenge!
         </Text>
       </View>
-      <View
-        style={{
-          flex: 1,
-          borderTopColor: "#6CA530",
-          borderBottomColor: "#6CA530",
-          borderTopWidth: 2,
-          borderBottomWidth: 2,
-          marginTop: 18,
-          marginBottom: 14,
-          backgroundColor: DuoLensNeutralColors.snow,
-        }}
-      >
+      <View style={styles.centralContainer}>
         <FlatList
-          keyExtractor={(item) => item}
           data={SupportedLanguages.sort()}
+          keyExtractor={(item) => item}
           renderItem={({ item }) => (
             <LanguagePressableSmall
               languageName={item}
@@ -61,7 +49,7 @@ export const LanguageSelectionScreen = ({}) => {
               onSelect={() => onSelect(item)}
             />
           )}
-          contentContainerStyle={[styles.container, styles.viewContainer]}
+          contentContainerStyle={styles.flatlistContainer}
         />
       </View>
       <View style={styles.confirmButtonContainer}>
@@ -69,7 +57,11 @@ export const LanguageSelectionScreen = ({}) => {
           enabled={selected != null}
           text="Confirm"
           type="orange"
-          onPressAction={() => navigation.navigate("ChallengeScreen")}
+          onPressAction={() =>
+            navigation.navigate("ChallengeScreen", {
+              selectedLanguage: selected,
+            })
+          }
         />
       </View>
     </SafeAreaView>
@@ -77,15 +69,9 @@ export const LanguageSelectionScreen = ({}) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: DuoLensNeutralColors.snow,
-  },
-  viewContainer: {
-    // flex: 1,
-    alignItems: "center",
-    // justifyContent: "center",
-    // marginTop: 30,
-    paddingVertical: 10,
+  safeAreaContainer: {
+    backgroundColor: DuoLensPrimaryColors.feathergreen,
+    flex: 1,
   },
   headerText: {
     color: DuoLensNeutralColors.snow,
@@ -102,8 +88,20 @@ const styles = StyleSheet.create({
     marginHorizontal: 24,
     marginTop: 24,
   },
-  duolingoGreen: {
-    backgroundColor: DuoLensPrimaryColors.feathergreen,
+  centralContainer: {
+    flex: 1,
+    borderTopColor: "#6CA530",
+    borderBottomColor: "#6CA530",
+    borderTopWidth: 2,
+    borderBottomWidth: 2,
+    marginTop: 18,
+    marginBottom: 14,
+    backgroundColor: DuoLensNeutralColors.snow,
+  },
+  flatlistContainer: {
+    backgroundColor: DuoLensNeutralColors.snow,
+    alignItems: "center",
+    paddingVertical: 10,
   },
   confirmButtonContainer: {
     paddingHorizontal: "5%",
