@@ -18,11 +18,19 @@ import {
 type LanguagePressableSmallProps = {
   languageName?: string;
   selected: boolean;
+  onSelect(): any;
 };
 
 export const LanguagePressableSmall = (props: LanguagePressableSmallProps) => {
-  const { languageName = "English", selected = false } = props;
-  const [offset] = useState(new Animated.Value(2));
+  const {
+    languageName = "English",
+    selected = false,
+    onSelect = () => {
+      alert("Dumbo");
+    },
+  } = props;
+  const shadowHeight = 2;
+  const [offset] = useState(new Animated.Value(shadowHeight));
   const [topMargin] = useState(new Animated.Value(0));
 
   const handlePressIn = () => {
@@ -34,7 +42,7 @@ export const LanguagePressableSmall = (props: LanguagePressableSmallProps) => {
     }).start();
 
     Animated.timing(topMargin, {
-      toValue: 2,
+      toValue: shadowHeight,
       duration: 25,
       easing: Easing.linear,
       useNativeDriver: false,
@@ -45,7 +53,7 @@ export const LanguagePressableSmall = (props: LanguagePressableSmallProps) => {
 
   const handlePressOut = () => {
     Animated.timing(offset, {
-      toValue: 2,
+      toValue: shadowHeight,
       duration: 25,
       easing: Easing.linear,
       useNativeDriver: false,
@@ -64,7 +72,8 @@ export const LanguagePressableSmall = (props: LanguagePressableSmallProps) => {
       unstable_pressDelay={100}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      style={{ margin: 10 }}
+      onPress={onSelect}
+      style={{ margin: 9 }}
     >
       <Animated.View
         style={[

@@ -1,4 +1,12 @@
-import { SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import {
   DuoLensNeutralColors,
   DuoLensPrimaryColors,
@@ -7,21 +15,24 @@ import { LanguagePressableSmall } from "../components/LanguagePressableSmall";
 import { SupportedLanguages } from "../data/SupportedLanguages";
 import { BottomButton } from "../components/BottomButton";
 import { useNavigation } from "@react-navigation/native";
+import { useState } from "react";
 
 export const LanguageSelectionScreen = ({}) => {
   const navigation = useNavigation();
-  const languagePressableList = SupportedLanguages.sort().map((item) => (
-    <LanguagePressableSmall
-      languageName={item}
-      selected={false}
-      key={item}
-    ></LanguagePressableSmall>
-  ));
+  const [selected, setSelected] = useState(null as unknown);
+  const onSelect = (selectedLang: string) => {
+    setSelected(selectedLang);
+  };
 
   return (
     <SafeAreaView style={[styles.duolingoGreen, { flex: 1 }]}>
       <View style={{ backgroundColor: DuoLensPrimaryColors.feathergreen }}>
-        <Text style={styles.headerText}>duolens</Text>
+        <Pressable
+          onPress={() => setSelected(null)}
+          style={{ alignSelf: "center" }}
+        >
+          <Text style={styles.headerText}>duolens</Text>
+        </Pressable>
       </View>
       <View>
         <Text style={styles.instructionText}>
@@ -31,6 +42,8 @@ export const LanguageSelectionScreen = ({}) => {
       <View
         style={{
           flex: 1,
+          borderTopColor: "#6CA530",
+          borderBottomColor: "#6CA530",
           borderTopWidth: 2,
           borderBottomWidth: 2,
           marginTop: 18,
@@ -38,16 +51,22 @@ export const LanguageSelectionScreen = ({}) => {
           backgroundColor: DuoLensNeutralColors.snow,
         }}
       >
-        <ScrollView contentContainerStyle={[styles.container]}>
-          <View style={styles.viewContainer}>
-            <View style={{ marginBottom: 10 }}></View>
-            {languagePressableList}
-          </View>
-        </ScrollView>
+        <FlatList
+          keyExtractor={(item) => item}
+          data={SupportedLanguages.sort()}
+          renderItem={({ item }) => (
+            <LanguagePressableSmall
+              languageName={item}
+              selected={item === selected}
+              onSelect={() => onSelect(item)}
+            />
+          )}
+          contentContainerStyle={[styles.container, styles.viewContainer]}
+        />
       </View>
       <View style={styles.confirmButtonContainer}>
         <BottomButton
-          enabled={true}
+          enabled={selected != null}
           text="Confirm"
           type="orange"
           onPressAction={() => navigation.navigate("ChallengeScreen")}
@@ -62,10 +81,11 @@ const styles = StyleSheet.create({
     backgroundColor: DuoLensNeutralColors.snow,
   },
   viewContainer: {
-    flex: 1,
+    // flex: 1,
     alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 10,
+    // justifyContent: "center",
+    // marginTop: 30,
+    paddingVertical: 10,
   },
   headerText: {
     color: DuoLensNeutralColors.snow,

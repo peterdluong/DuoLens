@@ -1,5 +1,5 @@
 export const SupportedLanguages = [
-  "English",
+  // "English",
   "French",
   "Spanish",
   "Vietnamese",
@@ -7,8 +7,8 @@ export const SupportedLanguages = [
   "Cantonese",
   "Japanese",
   "Sugondese",
-  // "Korean",
-  // "German",
+  "Korean",
+  "German",
   // "Thai",
   // "Hindi",
 ];
