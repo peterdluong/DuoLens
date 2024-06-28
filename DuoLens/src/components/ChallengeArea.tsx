@@ -1,0 +1,160 @@
+import { Dimensions, StyleSheet, View } from "react-native";
+import { DuoLensNeutralColors } from "../styles/BrandColors";
+import { ReactElement, useState } from "react";
+import { runOnUI, useSharedValue } from "react-native-reanimated";
+import { AnimatedWord } from "./AnimatedWord";
+
+type ChallengeAreaProps = {
+  //   scrambledTextArray: string[];
+  children: ReactElement<{ id: number }>[];
+};
+
+export const ChallengeArea = ({ children }: ChallengeAreaProps) => {
+  const [ready, setReady] = useState(false);
+  const offsets = children.map(() => ({
+    order: useSharedValue(0),
+    width: useSharedValue(0),
+    height: useSharedValue(0),
+    x: useSharedValue(0),
+    y: useSharedValue(0),
+    originalX: useSharedValue(0),
+    originalY: useSharedValue(0),
+  }));
+  const numLines = 4;
+  console.log(`number of children: ${children.length}`);
+  //   if (1) {
+  if (!ready) {
+    return (
+      <View style={styles.wordSelectionContainer}>
+        {children.map((child, index) => {
+          return (
+            <View
+              key={index}
+              onLayout={({
+                nativeEvent: {
+                  layout: { x, y, width, height },
+                },
+              }) => {
+                console.log(
+                  `index: ${index} x: ${x} y: ${y} width: ${width} height: ${height}`
+                );
+                offsets[index].order.value = -1;
+                offsets[index].originalX.value = x;
+                offsets[index].originalY.value = y;
+                offsets[index].width.value = width;
+                offsets[index].height.value = height;
+
+                console.log(
+                  `offsets.filter: ${
+                    offsets.filter((item) => item.order.value !== -1).length
+                  }`
+                );
+
+                if (
+                  offsets.filter((item) => item.order.value !== -1).length === 0
+                ) {
+                  setReady(true);
+                }
+              }}
+            >
+              {child}
+            </View>
+          );
+        })}
+      </View>
+    );
+  } else {
+    return (
+      <View
+        style={[styles.wordSelectionContainer, { paddingHorizontal: "5%" }]}
+      >
+        {[...Array(numLines)].map((item, index) => (
+          <View
+            key={index}
+            style={[
+              styles.ruledLine,
+              StyleSheet.absoluteFill,
+              {
+                top: index * 63,
+                left: Dimensions.get("window").width * 0.05,
+              },
+            ]}
+          ></View>
+        ))}
+        {children.map((child, index) => (
+          <AnimatedWord key={index} offsets={offsets} index={index}>
+            {child}
+          </AnimatedWord>
+        ))}
+      </View>
+    );
+    return (
+      <View style={{ flex: 1, borderWidth: 1 }}>
+        <View style={styles.ruledContainer}>
+          {[...Array(numLines)].map((item, index) => (
+            <View
+              key={index}
+              style={[
+                styles.ruledLine,
+                StyleSheet.absoluteFill,
+                {
+                  top: index * 63,
+                  left: Dimensions.get("window").width * 0.05,
+                },
+              ]}
+            ></View>
+          ))}
+        </View>
+        <View style={styles.wordSelectionContainer}>
+          {/* {children} */}
+          {children.map((child, index) => {
+            // return <View key={index}>{child}</View>;
+            return (
+              <AnimatedWord key={index} offsets={offsets} index={index}>
+                {child}
+              </AnimatedWord>
+            );
+          })}
+          {/* {scrambledTextArray.map((item, index) => (
+            <WordbankWord
+              word={item}
+              key={index}
+              onPressAction={() => {
+                alert(index);
+              }}
+            />
+          ))} */}
+        </View>
+      </View>
+    );
+  }
+};
+
+const styles = StyleSheet.create({
+  ruledContainer: {
+    // flex: 1,
+    flexDirection: "column",
+    // justifyContent: "space-between",
+    // borderWidth: 1,
+    // height: "45%",
+    paddingHorizontal: "5%",
+  },
+  ruledLine: {
+    backgroundColor: DuoLensNeutralColors.swan,
+    height: 2,
+    width: "100%",
+    borderRadius: "50%",
+  },
+  wordSelectionContainer: {
+    flexDirection: "row",
+    flex: 1,
+    flexWrap: "wrap",
+    width: "100%",
+    // alignContent: "center",
+    // alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: "5%",
+    // overflow: "hidden",
+    top: 9,
+  },
+});

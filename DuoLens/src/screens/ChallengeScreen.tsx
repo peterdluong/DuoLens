@@ -7,10 +7,11 @@ import {
 import { WithLocalSvg } from "react-native-svg/css";
 import { ProgressBar } from "../components/ProgressBar";
 import { BottomButton } from "../components/BottomButton";
-import { WordbankWord } from "../components/WordbankWord";
 import { getRandomInt, randomizeArray } from "../helper/helpers";
 import { useNavigation } from "@react-navigation/native";
 import { translation_database } from "./../data/TranslationDatabase.json";
+import { ChallengeArea } from "../components/ChallengeArea";
+import { WordbankWord } from "../components/WordbankWord";
 
 export const ChallengeScreen = ({ route }) => {
   const navigation = useNavigation();
@@ -19,19 +20,21 @@ export const ChallengeScreen = ({ route }) => {
 
   const randomChallengeTexIndex = getRandomInt(0, translation_database.length);
 
-  const translationText =
-    // "You are very stupid and you smell like toe fungus that's fuckin' grody";
-    translation_database[randomChallengeTexIndex].English;
+  // const translationText = "You are very stupid and you smell";
+  const translationText = translation_database[randomChallengeTexIndex].English;
   let wordArray = translationText.trim().split(" ");
   wordArray = randomizeArray(wordArray);
 
-  const wordSelectList = wordArray.map((item, index) => (
-    <WordbankWord word={item} key={index} />
-  ));
   return (
     <SafeAreaView style={styles.viewContainer}>
       <View style={styles.headerContainer}>
-        <Ionicons name="settings-outline" size={30} color="#A6A6A7" />
+        <Pressable
+          onPress={() => {
+            navigation.goBack();
+          }}
+        >
+          <Ionicons name="settings-outline" size={30} color="#A6A6A7" />
+        </Pressable>
         <View style={styles.progressBarContainer}>
           <ProgressBar percentage={50} />
         </View>
@@ -60,13 +63,18 @@ export const ChallengeScreen = ({ route }) => {
           </View>
         </View>
       </View>
-      <View style={styles.ruledContainer}>
-        <View style={styles.ruledLine}></View>
-        <View style={styles.ruledLine}></View>
-        <View style={styles.ruledLine}></View>
-        <View style={styles.ruledLine}></View>
-      </View>
-      <View style={styles.wordSelectionContainer}>{wordSelectList}</View>
+      {/* <ChallengeArea scrambledTextArray={wordArray} /> */}
+      <ChallengeArea>
+        {wordArray.map((item, index) => (
+          <WordbankWord
+            word={item}
+            key={index}
+            // onPressAction={() => {
+            //   alert(index);
+            // }}
+          />
+        ))}
+      </ChallengeArea>
       <View style={styles.checkButtonContainer}>
         <BottomButton
           enabled={true}
@@ -148,31 +156,6 @@ const styles = StyleSheet.create({
   foreignText: {
     fontFamily: "Nunito_500Medium",
     fontSize: 16,
-  },
-  ruledContainer: {
-    flexDirection: "column",
-    justifyContent: "space-between",
-    // borderWidth: 1,
-    height: "24%",
-    paddingHorizontal: "5%",
-  },
-  ruledLine: {
-    backgroundColor: DuoLensNeutralColors.swan,
-    height: 2,
-    width: "100%",
-    borderRadius: "50%",
-  },
-  wordSelectionContainer: {
-    // borderWidth: 1,
-    flexDirection: "row",
-    flex: 1,
-    flexWrap: "wrap",
-    width: "100%",
-    alignContent: "center",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: "5%",
-    overflow: "hidden",
   },
   checkButtonContainer: {
     paddingHorizontal: "5%",

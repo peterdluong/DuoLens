@@ -1,3 +1,4 @@
+import "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
 import { useFonts } from "expo-font";
@@ -11,6 +12,7 @@ import { useCallback } from "react";
 import * as SplashScreen from "expo-splash-screen";
 import { ChallengeScreen } from "./src/screens/ChallengeScreen";
 import { Navigation } from "./src/navigation";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -34,11 +36,13 @@ export default function App() {
   }
 
   return (
-    <View onLayout={onLayoutRootView} style={[styles.container, { flex: 1 }]}>
-      {/* <ChallengeScreen /> */}
-      <Navigation />
-      <StatusBar style="auto" />
-    </View>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <View onLayout={onLayoutRootView} style={[styles.container, { flex: 1 }]}>
+        {/* <ChallengeScreen /> */}
+        <Navigation />
+        <StatusBar style="auto" />
+      </View>
+    </GestureHandlerRootView>
   );
 }
 

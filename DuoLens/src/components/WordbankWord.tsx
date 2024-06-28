@@ -1,11 +1,4 @@
-import {
-  Animated,
-  Easing,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Animated, Easing, Pressable, StyleSheet, Text } from "react-native";
 import * as Haptics from "expo-haptics";
 import { useState } from "react";
 import { DuoLensNeutralColors } from "../styles/BrandColors";
@@ -14,8 +7,7 @@ type WordbankWordProps = {
   word: string;
 };
 
-export const WordbankWord = (props: WordbankWordProps) => {
-  const { word = "word" } = props;
+export const WordbankWord = ({ word }: WordbankWordProps) => {
   const [offset] = useState(new Animated.Value(2));
   const [topMargin] = useState(new Animated.Value(0));
 
@@ -57,7 +49,7 @@ export const WordbankWord = (props: WordbankWordProps) => {
     <Pressable
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      style={{ marginHorizontal: 3, marginVertical: 4 }}
+      style={{ marginHorizontal: 3, marginBottom: 12 }}
     >
       <Animated.View
         style={[
@@ -69,7 +61,7 @@ export const WordbankWord = (props: WordbankWordProps) => {
           },
         ]}
       >
-        <Text style={styles.wordbankWordText}>{props.word}</Text>
+        <Text style={styles.wordbankWordText}>{word}</Text>
       </Animated.View>
     </Pressable>
   );
