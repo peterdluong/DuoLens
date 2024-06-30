@@ -3,10 +3,11 @@ import { DuoLensNeutralColors } from "../styles/BrandColors";
 import { ReactElement, useState } from "react";
 import { runOnUI, useSharedValue } from "react-native-reanimated";
 import { AnimatedWord } from "./AnimatedWord";
+import { calculateLayout } from "../helper/helpers";
 
 type ChallengeAreaProps = {
   //   scrambledTextArray: string[];
-  children: ReactElement<{ id: number }>[];
+  children: ReactElement<{ word: string }>[];
 };
 
 export const ChallengeArea = ({ children }: ChallengeAreaProps) => {
@@ -19,10 +20,11 @@ export const ChallengeArea = ({ children }: ChallengeAreaProps) => {
     y: useSharedValue(0),
     originalX: useSharedValue(0),
     originalY: useSharedValue(0),
+    text: useSharedValue(""),
   }));
   const numLines = 4;
-  console.log(`number of children: ${children.length}`);
-  //   if (1) {
+  const containerWidth = Dimensions.get("window").width - 30;
+  // if (1) {
   if (!ready) {
     return (
       <View style={styles.wordSelectionContainer}>
@@ -35,24 +37,21 @@ export const ChallengeArea = ({ children }: ChallengeAreaProps) => {
                   layout: { x, y, width, height },
                 },
               }) => {
-                console.log(
-                  `index: ${index} x: ${x} y: ${y} width: ${width} height: ${height}`
-                );
+                // console.log(
+                //   `index: ${index} x: ${x} y: ${y} width: ${width} height: ${height}`
+                // );
                 offsets[index].order.value = -1;
                 offsets[index].originalX.value = x;
                 offsets[index].originalY.value = y;
                 offsets[index].width.value = width;
                 offsets[index].height.value = height;
-
-                console.log(
-                  `offsets.filter: ${
-                    offsets.filter((item) => item.order.value !== -1).length
-                  }`
-                );
+                offsets[index].text.value = child.props.word;
 
                 if (
-                  offsets.filter((item) => item.order.value !== -1).length === 0
+                  offsets.filter((item) => item.order.value != -1).length == 0
                 ) {
+                  //   console.log(`containerWidth: ${containerWidth}`);
+                  //   calculateLayout(offsets, containerWidth);
                   setReady(true);
                 }
               }}
@@ -82,49 +81,15 @@ export const ChallengeArea = ({ children }: ChallengeAreaProps) => {
           ></View>
         ))}
         {children.map((child, index) => (
-          <AnimatedWord key={index} offsets={offsets} index={index}>
+          <AnimatedWord
+            key={index}
+            offsets={offsets}
+            index={index}
+            containerWidth={containerWidth}
+          >
             {child}
           </AnimatedWord>
         ))}
-      </View>
-    );
-    return (
-      <View style={{ flex: 1, borderWidth: 1 }}>
-        <View style={styles.ruledContainer}>
-          {[...Array(numLines)].map((item, index) => (
-            <View
-              key={index}
-              style={[
-                styles.ruledLine,
-                StyleSheet.absoluteFill,
-                {
-                  top: index * 63,
-                  left: Dimensions.get("window").width * 0.05,
-                },
-              ]}
-            ></View>
-          ))}
-        </View>
-        <View style={styles.wordSelectionContainer}>
-          {/* {children} */}
-          {children.map((child, index) => {
-            // return <View key={index}>{child}</View>;
-            return (
-              <AnimatedWord key={index} offsets={offsets} index={index}>
-                {child}
-              </AnimatedWord>
-            );
-          })}
-          {/* {scrambledTextArray.map((item, index) => (
-            <WordbankWord
-              word={item}
-              key={index}
-              onPressAction={() => {
-                alert(index);
-              }}
-            />
-          ))} */}
-        </View>
       </View>
     );
   }

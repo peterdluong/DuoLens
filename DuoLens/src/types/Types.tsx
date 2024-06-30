@@ -12,8 +12,7 @@ type Offset = SharedValues<{
   y: number;
   originalX: number;
   originalY: number;
+  text: string;
 }>;
 
-const Y_OFFSET_TEMP = 210;
-
-export { Offset, Y_OFFSET_TEMP };
+export { Offset };

@@ -7,21 +7,30 @@ import {
 import { WithLocalSvg } from "react-native-svg/css";
 import { ProgressBar } from "../components/ProgressBar";
 import { BottomButton } from "../components/BottomButton";
-import { getRandomInt, randomizeArray } from "../helper/helpers";
+import {
+  getRandomInt,
+  randomizeArray,
+  removePunctuation,
+} from "../helper/helpers";
 import { useNavigation } from "@react-navigation/native";
 import { translation_database } from "./../data/TranslationDatabase.json";
 import { ChallengeArea } from "../components/ChallengeArea";
 import { WordbankWord } from "../components/WordbankWord";
+import { useState } from "react";
 
 export const ChallengeScreen = ({ route }) => {
   const navigation = useNavigation();
   const duoOwlAvatar = require("../../assets/duo-owl-angry.svg");
   const { selectedLanguage } = route.params;
 
+  const [sentence, setSentence] = useState("");
+
   const randomChallengeTexIndex = getRandomInt(0, translation_database.length);
 
   // const translationText = "You are very stupid and you smell";
-  const translationText = translation_database[randomChallengeTexIndex].English;
+  const translationText = removePunctuation(
+    translation_database[randomChallengeTexIndex].English
+  );
   let wordArray = translationText.trim().split(" ");
   wordArray = randomizeArray(wordArray);
 
@@ -80,7 +89,7 @@ export const ChallengeScreen = ({ route }) => {
           enabled={true}
           type="green"
           //   onPressAction={() => navigation.navigate("CameraScreen")}
-          onPressAction={() => alert(randomChallengeTexIndex)}
+          onPressAction={() => alert(`You entered: ${sentence}`)}
         />
       </View>
     </SafeAreaView>

@@ -1,7 +1,8 @@
 import { Dimensions, View } from "react-native";
-import { Offset, Y_OFFSET_TEMP } from "../types/Types";
+import { Offset } from "../types/Types";
 import { DuoLensNeutralColors } from "../styles/BrandColors";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import { Y_OFFSET_TEMP } from "../helper/helpers";
 
 type PlaceholderProps = {
   offset: Offset;
