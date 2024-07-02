@@ -1,6 +1,7 @@
 import { ReactElement } from "react";
 import { StyleSheet } from "react-native";
 import {
+  Gesture,
   GestureDetector,
   PanGestureHandler,
   PanGestureHandlerGestureEvent,
@@ -54,11 +55,10 @@ export const AnimatedWord = ({
     runOnJS(updateSentence)(input);
   };
 
-  const onGestureEventHandler = useAnimatedGestureHandler<
-    PanGestureHandlerGestureEvent,
-    { x: number; y: number }
-  >({
-    onStart: (evt, ctx) => {
+  const prevPositionX = useSharedValue(0);
+  const prevPositionY = useSharedValue(0);
+  const panHandler = Gesture.Pan()
+    .onStart(() => {
       if (isInBank.value) {
         translation.x.value = offset.originalX.value;
         translation.y.value = offset.originalY.value + Y_OFFSET_TEMP;
@@ -66,13 +66,13 @@ export const AnimatedWord = ({
         translation.x.value = offset.x.value;
         translation.y.value = offset.y.value;
       }
-      ctx.x = translation.x.value;
-      ctx.y = translation.y.value;
+      prevPositionX.value = translation.x.value;
+      prevPositionY.value = translation.y.value;
       isGestureActive.value = true;
-    },
-    onActive: ({ translationX, translationY }, ctx) => {
-      translation.x.value = ctx.x + translationX;
-      translation.y.value = ctx.y + translationY;
+    })
+    .onUpdate(({ translationX, translationY }) => {
+      translation.x.value = prevPositionX.value + translationX;
+      translation.y.value = prevPositionY.value + translationY;
       if (isInBank.value && translation.y.value < 180) {
         offset.order.value = lastOrder(offsets);
         calculateLayout(offsets, containerWidth);
@@ -105,8 +105,8 @@ export const AnimatedWord = ({
           break;
         }
       }
-    },
-    onEnd: () => {
+    })
+    .onEnd(() => {
       isGestureActive.value = false;
       translation.x.value = withSpring(offset.x.value, {
         mass: 2,
@@ -120,8 +120,22 @@ export const AnimatedWord = ({
       });
       const userSentence = composeSentence(offsets);
       updateGlobalSentence(userSentence);
-    },
+    });
+
+  const tapHandler = Gesture.Tap().onEnd(() => {
+    if (isInBank.value) {
+      offset.order.value = lastOrder(offsets);
+      calculateLayout(offsets, containerWidth);
+    } else {
+      offset.order.value = -1;
+      remove(offsets, index);
+      calculateLayout(offsets, containerWidth);
+    }
+    const userSentence = composeSentence(offsets);
+    updateGlobalSentence(userSentence);
   });
+
+  const composed = Gesture.Simultaneous(panHandler, tapHandler);
 
   const translateX = useDerivedValue(() => {
     if (isGestureActive.value) {
@@ -165,11 +179,9 @@ export const AnimatedWord = ({
     <>
       <Placeholder offset={offset} />
       <Animated.View style={style}>
-        {/* <GestureDetector gesture={onGestureEventHandler}> */}
-        <PanGestureHandler onGestureEvent={onGestureEventHandler}>
+        <GestureDetector gesture={composed}>
           <Animated.View>{children}</Animated.View>
-        </PanGestureHandler>
-        {/* </GestureDetector> */}
+        </GestureDetector>
       </Animated.View>
     </>
   );

@@ -156,6 +156,6 @@ export const composeSentence = (input: Offset[]) => {
       accumulatedSentence += ` ${item.text.value}`;
     }
   });
-  console.log(accumulatedSentence);
+  // console.log(accumulatedSentence);
   return accumulatedSentence;
 };

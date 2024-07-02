@@ -95,8 +95,9 @@ export const ChallengeScreen = ({ route }) => {
           //   onPressAction={() => navigation.navigate("CameraScreen")}
           onPressAction={() =>
             alert(
-              sentence === translationText ? "You're correct" : "You're wrong"
-              // `You entered: ${sentence}. \nThe correct sentence is: ${translationText}`
+              sentence === translationText
+                ? `You're correct! \n\nThe corrected phrase is: ${translationText}`
+                : `You're wrong!\n\n You entered: ${sentence}\n\nThe correct phrase is: ${translationText}`
             )
           }
         />
