@@ -16,7 +16,7 @@ import { useNavigation } from "@react-navigation/native";
 import { translation_database } from "./../data/TranslationDatabase.json";
 import { ChallengeArea } from "../components/ChallengeArea";
 import { WordbankWord } from "../components/WordbankWord";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 export const ChallengeScreen = ({ route }) => {
   const navigation = useNavigation();
@@ -25,14 +25,18 @@ export const ChallengeScreen = ({ route }) => {
 
   const [sentence, setSentence] = useState("");
 
-  const randomChallengeTexIndex = getRandomInt(0, translation_database.length);
+  const randomIndex = useRef(getRandomInt(0, translation_database.length));
+  // randomIndex.current = getRandomInt(0, translation_database.length);
+  // const randomChallengeTextIndex = randomIndex.current;
+
+  // const randomChallengeTextIndex = getRandomInt(0, translation_database.length);
 
   // const translationText = "You are very stupid and you smell";
   const translationText = removePunctuation(
-    translation_database[randomChallengeTexIndex].English
+    translation_database[randomIndex.current].English
   );
   let wordArray = translationText.trim().split(" ");
-  wordArray = randomizeArray(wordArray);
+  const randomizedWordArray = useRef(randomizeArray(wordArray));
 
   return (
     <SafeAreaView style={styles.viewContainer}>
@@ -67,14 +71,14 @@ export const ChallengeScreen = ({ route }) => {
           <View style={styles.textSpeechBubble}>
             <Text style={styles.foreignText}>
               {/* {`You selected ${selectedLanguage}\n`}Dōmo arigatō misutā Robotto. */}
-              {translation_database[randomChallengeTexIndex][selectedLanguage]}
+              {translation_database[randomIndex.current][selectedLanguage]}
             </Text>
           </View>
         </View>
       </View>
       {/* <ChallengeArea scrambledTextArray={wordArray} /> */}
-      <ChallengeArea>
-        {wordArray.map((item, index) => (
+      <ChallengeArea updateSentence={setSentence}>
+        {randomizedWordArray.current.map((item, index) => (
           <WordbankWord
             word={item}
             key={index}
@@ -86,10 +90,15 @@ export const ChallengeScreen = ({ route }) => {
       </ChallengeArea>
       <View style={styles.checkButtonContainer}>
         <BottomButton
-          enabled={true}
+          enabled={sentence !== "" ? true : false}
           type="green"
           //   onPressAction={() => navigation.navigate("CameraScreen")}
-          onPressAction={() => alert(`You entered: ${sentence}`)}
+          onPressAction={() =>
+            alert(
+              sentence === translationText ? "You're correct" : "You're wrong"
+              // `You entered: ${sentence}. \nThe correct sentence is: ${translationText}`
+            )
+          }
         />
       </View>
     </SafeAreaView>

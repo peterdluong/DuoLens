@@ -7,6 +7,7 @@ import {
 } from "react-native-gesture-handler";
 import Animated, {
   SharedValue,
+  runOnJS,
   useAnimatedGestureHandler,
   useAnimatedStyle,
   useDerivedValue,
@@ -31,6 +32,7 @@ type AnimatedWordProps = {
   children: ReactElement<{ word: string }>;
   index: number;
   containerWidth: number;
+  updateSentence(input: string): any;
 };
 
 export const AnimatedWord = ({
@@ -38,6 +40,7 @@ export const AnimatedWord = ({
   children,
   index,
   containerWidth,
+  updateSentence,
 }: AnimatedWordProps) => {
   const offset = offsets[index];
   const isGestureActive = useSharedValue(false);
@@ -45,6 +48,11 @@ export const AnimatedWord = ({
   const isInBank = useDerivedValue(() => {
     return offset.order.value === -1;
   });
+
+  const updateGlobalSentence = (input: string) => {
+    "worklet";
+    runOnJS(updateSentence)(input);
+  };
 
   const onGestureEventHandler = useAnimatedGestureHandler<
     PanGestureHandlerGestureEvent,
@@ -111,6 +119,7 @@ export const AnimatedWord = ({
         stiffness: 200,
       });
       const userSentence = composeSentence(offsets);
+      updateGlobalSentence(userSentence);
     },
   });
 

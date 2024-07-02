@@ -8,9 +8,13 @@ import { calculateLayout } from "../helper/helpers";
 type ChallengeAreaProps = {
   //   scrambledTextArray: string[];
   children: ReactElement<{ word: string }>[];
+  updateSentence(input: string): any;
 };
 
-export const ChallengeArea = ({ children }: ChallengeAreaProps) => {
+export const ChallengeArea = ({
+  children,
+  updateSentence,
+}: ChallengeAreaProps) => {
   const [ready, setReady] = useState(false);
   const offsets = children.map(() => ({
     order: useSharedValue(0),
@@ -86,6 +90,7 @@ export const ChallengeArea = ({ children }: ChallengeAreaProps) => {
             offsets={offsets}
             index={index}
             containerWidth={containerWidth}
+            updateSentence={updateSentence}
           >
             {child}
           </AnimatedWord>
