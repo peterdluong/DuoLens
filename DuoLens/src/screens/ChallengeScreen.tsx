@@ -1,4 +1,11 @@
-import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import {
+  Dimensions,
+  Pressable,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import {
   DuoLensNeutralColors,
@@ -17,6 +24,14 @@ import { translation_database } from "./../data/TranslationDatabase.json";
 import { ChallengeArea } from "../components/ChallengeArea";
 import { WordbankWord } from "../components/WordbankWord";
 import { useRef, useState } from "react";
+import Animated, {
+  Easing,
+  ReduceMotion,
+  useAnimatedStyle,
+  useDerivedValue,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 
 export const ChallengeScreen = ({ route }) => {
   const navigation = useNavigation();
@@ -24,6 +39,7 @@ export const ChallengeScreen = ({ route }) => {
   const { selectedLanguage } = route.params;
 
   const [sentence, setSentence] = useState("");
+  const [continueMode, setContinueMode] = useState(false);
 
   const randomIndex = useRef(getRandomInt(0, translation_database.length));
   // randomIndex.current = getRandomInt(0, translation_database.length);
@@ -37,6 +53,31 @@ export const ChallengeScreen = ({ route }) => {
   );
   let wordArray = translationText.trim().split(" ");
   const randomizedWordArray = useRef(randomizeArray(wordArray));
+
+  const bottomSheetHeight = 170;
+  const bottomSheetVisible = useSharedValue(false);
+  const bottomSheetVertOffset = useDerivedValue(() => {
+    return withTiming(bottomSheetVisible.value ? 0 : -bottomSheetHeight, {
+      duration: 350,
+      easing: Easing.out(Easing.cubic),
+      reduceMotion: ReduceMotion.System,
+    });
+  });
+  useSharedValue(-bottomSheetHeight);
+  const bottomSheetStyle = useAnimatedStyle(() => {
+    return {
+      backgroundColor: sentence === translationText ? "#E1FEC1" : "#FAE0E1",
+      position: "absolute",
+      height: bottomSheetHeight,
+      // width: Dimensions.get("window").width,
+      width: "150%",
+      zIndex: 2,
+      bottom: bottomSheetVertOffset.value,
+      marginBottom: -50,
+      paddingHorizontal: "5%",
+      paddingTop: "4%",
+    };
+  });
 
   return (
     <SafeAreaView style={styles.viewContainer}>
@@ -91,16 +132,45 @@ export const ChallengeScreen = ({ route }) => {
       <View style={styles.checkButtonContainer}>
         <BottomButton
           enabled={sentence !== "" ? true : false}
-          type="green"
+          type={continueMode && sentence !== translationText ? "red" : "green"}
           //   onPressAction={() => navigation.navigate("CameraScreen")}
-          onPressAction={() =>
-            alert(
-              sentence === translationText
-                ? `You're correct! \n\nThe corrected phrase is: ${translationText}`
-                : `You're wrong!\n\n You entered: ${sentence}\n\nThe correct phrase is: ${translationText}`
-            )
-          }
+          text={continueMode ? "Continue" : "Check"}
+          onPressAction={() => {
+            if (continueMode) {
+              navigation.navigate("CameraScreen", {
+                language: selectedLanguage,
+                correctness: sentence === translationText,
+              });
+            } else {
+              setContinueMode(true);
+              bottomSheetVisible.value = true;
+            }
+            // alert(
+            //   sentence === translationText
+            //     ? `You're correct! \n\nThe corrected phrase is: ${translationText}`
+            //     : `You're wrong!\n\n You entered: ${sentence}\n\nThe correct phrase is: ${translationText}`
+            // );
+          }}
         />
+        <Animated.View style={bottomSheetStyle}>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            {sentence === translationText ? (
+              <Ionicons name="checkmark-circle" size={30} color="#6CA530" />
+            ) : (
+              <Ionicons name="close-circle" size={30} color="#D63F38" />
+            )}
+            <Text
+              style={{
+                fontFamily: "Nunito_800ExtraBold",
+                color: sentence === translationText ? "#6CA530" : "#D63F38",
+                fontSize: 22,
+                marginLeft: 10,
+              }}
+            >
+              {sentence === translationText ? `Great job!` : `Incorrect`}
+            </Text>
+          </View>
+        </Animated.View>
       </View>
     </SafeAreaView>
   );

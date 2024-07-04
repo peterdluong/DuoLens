@@ -49,7 +49,7 @@ export const WordbankWord = ({ word }: WordbankWordProps) => {
     <Pressable
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      style={{ marginHorizontal: 3, marginBottom: 12 }}
+      style={{ marginHorizontal: 3, marginBottom: 12, zIndex: 1 }}
     >
       <Animated.View
         style={[

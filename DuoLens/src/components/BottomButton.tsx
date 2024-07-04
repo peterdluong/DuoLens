@@ -65,18 +65,28 @@ export const BottomButton = (props: BottomButtonProps) => {
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         onPress={onPressAction}
+        style={{ zIndex: 3 }}
       >
         <Animated.View
           style={[
             styles.bottomButton,
             {
               backgroundColor:
-                type == "green" ? DuoLensPrimaryColors.feathergreen : "#ffc200",
+                type == "green"
+                  ? DuoLensPrimaryColors.feathergreen
+                  : type == "red"
+                  ? "#EB5954"
+                  : "#ffc200",
               marginBottom: offset,
               marginTop: topMargin,
               shadowOffset: { width: 0, height: offset },
               shadowOpacity: 1,
-              shadowColor: type == "green" ? "#6CA530" : "#f49000",
+              shadowColor:
+                type == "green"
+                  ? "#6CA530"
+                  : type == "red"
+                  ? "#D63F38"
+                  : "#f49000",
               shadowRadius: 0,
             },
           ]}
@@ -84,7 +94,7 @@ export const BottomButton = (props: BottomButtonProps) => {
           <Text
             style={[
               styles.bottomButtonText,
-              { color: type == "green" ? "white" : "black" },
+              { color: type == "green" || type == "red" ? "white" : "black" },
             ]}
           >
             {text.toUpperCase()}
