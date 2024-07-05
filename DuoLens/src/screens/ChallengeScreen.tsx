@@ -21,9 +21,13 @@ import {
 } from "../helper/helpers";
 import { useNavigation } from "@react-navigation/native";
 import { translation_database } from "./../data/TranslationDatabase.json";
+import {
+  correct_sound_clips_database,
+  wrong_sound_clips_database,
+} from "../data/SoundClipsDB";
 import { ChallengeArea } from "../components/ChallengeArea";
 import { WordbankWord } from "../components/WordbankWord";
-import { useRef, useState } from "react";
+import { MutableRefObject, useEffect, useRef, useState } from "react";
 import Animated, {
   Easing,
   ReduceMotion,
@@ -32,6 +36,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { Audio } from "expo-av";
 
 export const ChallengeScreen = ({ route }) => {
   const navigation = useNavigation();
@@ -53,6 +58,57 @@ export const ChallengeScreen = ({ route }) => {
   );
   let wordArray = translationText.trim().split(" ");
   const randomizedWordArray = useRef(randomizeArray(wordArray));
+
+  //////////////////////////////////////////////// AUDIO
+
+  const [correctSound, setCorrectSound] = useState();
+  const [wrongSound, setWrongSound] = useState();
+  const correctSoundIndex = useRef(0);
+  const wrongSoundIndex = useRef(0);
+
+  useEffect(() => {
+    correctSoundIndex.current = getRandomInt(
+      0,
+      correct_sound_clips_database.length
+    );
+    wrongSoundIndex.current = getRandomInt(
+      0,
+      wrong_sound_clips_database.length
+    );
+  }, []);
+
+  useEffect(() => {
+    return correctSound
+      ? () => {
+          correctSound.unloadAsync();
+        }
+      : undefined;
+  }, []);
+
+  useEffect(() => {
+    return wrongSound
+      ? () => {
+          wrongSound.unloadAsync();
+        }
+      : undefined;
+  }, []);
+
+  const playCorrectSound = async () => {
+    const { sound } = await Audio.Sound.createAsync(
+      correct_sound_clips_database[correctSoundIndex.current]["Path"]
+    );
+    setCorrectSound(correctSound);
+    await sound.playAsync();
+  };
+  const playWrongSound = async () => {
+    const { sound } = await Audio.Sound.createAsync(
+      wrong_sound_clips_database[wrongSoundIndex.current]["Path"]
+    );
+    setWrongSound(wrongSound);
+    await sound.playAsync();
+  };
+
+  //////////////////////////////////////////////// AUDIO
 
   const bottomSheetHeight = 170;
   const bottomSheetVisible = useSharedValue(false);
@@ -142,6 +198,9 @@ export const ChallengeScreen = ({ route }) => {
                 correctness: sentence === translationText,
               });
             } else {
+              sentence === translationText
+                ? playCorrectSound()
+                : playWrongSound();
               setContinueMode(true);
               bottomSheetVisible.value = true;
             }
