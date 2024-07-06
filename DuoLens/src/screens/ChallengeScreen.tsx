@@ -198,11 +198,13 @@ export const ChallengeScreen = ({ route }) => {
                 correctness: sentence === translationText,
               });
             } else {
-              sentence === translationText
-                ? playCorrectSound()
-                : playWrongSound();
               setContinueMode(true);
               bottomSheetVisible.value = true;
+              setTimeout(() => {
+                sentence === translationText
+                  ? playCorrectSound()
+                  : playWrongSound();
+              }, 100);
             }
             // alert(
             //   sentence === translationText
