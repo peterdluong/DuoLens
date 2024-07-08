@@ -16,7 +16,7 @@ export const CameraScreen = () => {
   const ref = useRef<CameraView>(null);
   const [uri, setUri] = useState<string | null>(null);
   const [mode, setMode] = useState<CameraMode>("picture");
-  const [facing, setFacing] = useState<CameraType>("back");
+  const [facing, setFacing] = useState<CameraType>("front");
   const [recording, setRecording] = useState(false);
 
   if (!permission) {
@@ -64,7 +64,11 @@ export const CameraScreen = () => {
         <Image
           source={{ uri }}
           contentFit="contain"
-          style={{ width: 300, aspectRatio: 1 }}
+          style={{
+            width: "150%",
+            aspectRatio: 1,
+            transform: [{ scaleX: -1 }],
+          }}
         />
         <Button onPress={() => setUri(null)} title="Take another picture" />
       </View>

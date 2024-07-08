@@ -94,6 +94,7 @@ export const ChallengeScreen = ({ route }) => {
   }, []);
 
   const playCorrectSound = async () => {
+    await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
     const { sound } = await Audio.Sound.createAsync(
       correct_sound_clips_database[correctSoundIndex.current]["Path"]
     );
@@ -101,6 +102,7 @@ export const ChallengeScreen = ({ route }) => {
     await sound.playAsync();
   };
   const playWrongSound = async () => {
+    await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
     const { sound } = await Audio.Sound.createAsync(
       wrong_sound_clips_database[wrongSoundIndex.current]["Path"]
     );

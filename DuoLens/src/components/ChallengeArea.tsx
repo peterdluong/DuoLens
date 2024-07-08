@@ -1,6 +1,6 @@
 import { Dimensions, StyleSheet, View } from "react-native";
 import { DuoLensNeutralColors } from "../styles/BrandColors";
-import { ReactElement, useState } from "react";
+import { ReactElement, useEffect, useRef, useState } from "react";
 import { runOnUI, useSharedValue } from "react-native-reanimated";
 import { AnimatedWord } from "./AnimatedWord";
 import { calculateLayout } from "../helper/helpers";
@@ -28,7 +28,12 @@ export const ChallengeArea = ({
   }));
   const numLines = 4;
   const containerWidth = Dimensions.get("window").width - 30;
-  // if (1) {
+  const numWords = useRef(offsets.length);
+
+  useEffect(() => {
+    console.log(`offsets.length: ${offsets.length}`);
+  }, []);
+
   if (!ready) {
     return (
       <View style={styles.wordSelectionContainer}>
@@ -54,9 +59,14 @@ export const ChallengeArea = ({
                 if (
                   offsets.filter((item) => item.order.value != -1).length == 0
                 ) {
-                  //   console.log(`containerWidth: ${containerWidth}`);
-                  //   calculateLayout(offsets, containerWidth);
+                  console.log(`REAL!`);
                   setReady(true);
+                } else {
+                  if (numWords.current == 0) {
+                    console.log(`WORKAROUND!`);
+                    setReady(true);
+                  }
+                  numWords.current--;
                 }
               }}
             >

@@ -1,18 +1,18 @@
 {
   "app_name": "DuoLens",
   "translation_database": [
-    {
-      "English": "Please translate this sentence for me",
-      "Chinese (Traditional)": "請幫我翻譯這句話",
-      "French": "Veuillez traduire cette phrase pour moi",
-      "German": "Bitte übersetzen Sie diesen Satz für mich",
-      "Japanese": "この文章を訳してください",
-      "Korean": "이 문장을 번역해 주세요.",
-      "Chinese (Simplified)": "请帮我翻译这句话",
-      "Spanish": "Por favor, tradúzcame esta frase",
-      "Sugondese": "Please skibidi this duolussy for me bruv",
-      "Vietnamese": "Hãy dịch giùm tôi câu này nhé"
-    },
+    // {
+    //   "English": "Please translate this sentence for me",
+    //   "Chinese (Traditional)": "請幫我翻譯這句話",
+    //   "French": "Veuillez traduire cette phrase pour moi",
+    //   "German": "Bitte übersetzen Sie diesen Satz für mich",
+    //   "Japanese": "この文章を訳してください",
+    //   "Korean": "이 문장을 번역해 주세요.",
+    //   "Chinese (Simplified)": "请帮我翻译这句话",
+    //   "Spanish": "Por favor, tradúzcame esta frase",
+    //   "Sugondese": "Please skibidi this duolussy for me bruv",
+    //   "Vietnamese": "Hãy dịch giùm tôi câu này nhé"
+    // },
     {
       "English": "It's time to shotgun a beer",
       "Chinese (Traditional)": "是時候喝啤酒了",
@@ -61,18 +61,18 @@
       "Sugondese": "skibidi gyat edge rizz ligma bofa Candice deez nuts bruh uwu duolussy ohio",
       "Vietnamese": "Bạn phải uống hết đồ uống của mình"
     },
-    {
-      "English": "Let me take a selfie",
-      "Chinese (Traditional)": "讓我自拍一張",
-      "French": "Laissez-moi prendre un selfie",
-      "German": "Lass mich ein Selfie machen",
-      "Japanese": "セルフィーを撮らせて",
-      "Korean": "셀카 찍을게요",
-      "Chinese (Simplified)": "让我自拍一张",
-      "Spanish": "Déjame hacerme un selfie",
-      "Sugondese": "skibidi gyat edge rizz ligma bofa Candice deez nuts bruh uwu duolussy ohio",
-      "Vietnamese": "Hãy để tôi chụp ảnh tự sướng"
-    },
+    // {
+    //   "English": "Let me take a selfie",
+    //   "Chinese (Traditional)": "讓我自拍一張",
+    //   "French": "Laissez-moi prendre un selfie",
+    //   "German": "Lass mich ein Selfie machen",
+    //   "Japanese": "セルフィーを撮らせて",
+    //   "Korean": "셀카 찍을게요",
+    //   "Chinese (Simplified)": "让我自拍一张",
+    //   "Spanish": "Déjame hacerme un selfie",
+    //   "Sugondese": "skibidi gyat edge rizz ligma bofa Candice deez nuts bruh uwu duolussy ohio",
+    //   "Vietnamese": "Hãy để tôi chụp ảnh tự sướng"
+    // },
     {
       "English": "Is that the best costume you could come up with",
       "Chinese (Traditional)": "這就是你能想出的最好的服裝嗎？",
