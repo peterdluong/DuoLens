@@ -5,6 +5,7 @@ import { useFonts } from "expo-font";
 import {
   Nunito_400Regular,
   Nunito_500Medium,
+  Nunito_600SemiBold,
   Nunito_800ExtraBold,
   Nunito_900Black,
 } from "@expo-google-fonts/nunito";
@@ -21,6 +22,7 @@ export default function App() {
     "Feather-Bold": require("./assets/fonts/feather_bold.ttf"),
     Nunito_400Regular,
     Nunito_500Medium,
+    Nunito_600SemiBold,
     Nunito_800ExtraBold,
     Nunito_900Black,
   });

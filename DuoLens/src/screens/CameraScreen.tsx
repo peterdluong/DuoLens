@@ -78,6 +78,7 @@ export const CameraScreen = () => {
   const renderCamera = () => {
     return (
       <CameraView
+        zoom={0}
         style={styles.camera}
         ref={ref}
         mode={mode}

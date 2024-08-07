@@ -15,6 +15,7 @@ import { SupportedLanguages } from "../data/SupportedLanguages";
 import { BottomButton } from "../components/BottomButton";
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
+import { Ionicons } from "@expo/vector-icons";
 
 export const LanguageSelectionScreen = ({}) => {
   const navigation = useNavigation();
@@ -25,12 +26,24 @@ export const LanguageSelectionScreen = ({}) => {
 
   return (
     <SafeAreaView style={styles.safeAreaContainer}>
-      <View>
+      <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+        <Pressable
+          style={{ justifyContent: "center" }}
+          onPress={() => navigation.navigate("AlbumScreen")}
+        >
+          <Ionicons name="albums" size={30} color="white" />
+        </Pressable>
         <Pressable
           onPress={() => setSelected(null)}
           style={{ alignSelf: "center" }}
         >
           <Text style={styles.headerText}>duolens</Text>
+        </Pressable>
+        <Pressable
+          style={{ justifyContent: "center" }}
+          onPress={() => navigation.navigate("ChatScreen")}
+        >
+          <Ionicons name="chatbox-ellipses" size={30} color="white" />
         </Pressable>
       </View>
       <View>
