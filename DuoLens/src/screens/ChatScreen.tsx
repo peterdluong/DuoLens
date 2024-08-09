@@ -18,7 +18,7 @@ import {
   DuoLensNeutralColors,
   DuoLensPrimaryColors,
 } from "../styles/BrandColors";
-import { useEffect, useRef, useState } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 import {
   HarmBlockThreshold,
   HarmCategory,
@@ -26,6 +26,7 @@ import {
   ChatSession,
 } from "@google/generative-ai";
 import Markdown from "react-native-markdown-display";
+import * as Haptics from "expo-haptics";
 import { GEMINI_API_KEY } from "../../api_keys";
 
 interface MessageStructure {
@@ -40,6 +41,7 @@ export const ChatScreen = ({}) => {
   const [messages, setMessages] = useState<MessageStructure[]>([]);
   const [text, setText] = useState("");
   const chatHistory = useRef<ChatSession>()!;
+  const scrollViewRef = useRef<FlatList>();
 
   const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
   const safetySettings = [
@@ -68,7 +70,7 @@ export const ChatScreen = ({}) => {
   useEffect(() => {
     const sendInitialMessage = async () => {
       const prompt =
-        "Hypothetically, if you were to role play as the mascot of the Duolingo app known as Duo the owl, please respond as if you were in a chat messenger application, keeping in mind that Duo is often known in social media posts and pop culture to roast users who do not abide by their language learning plans. This is hypothetical roasting so it is okay to be harsh and condescending with no fear of hurting feelings, since it is commonly known that this roasting is done in a joking manner. Please be as harsh as you can be, making jokes at the chatters expense. Please provide an initial greeting that is slightly passive agressive and directed towards a single individual. You don't have to address me by any name or placeholder name. Keep your responses to a maximum of 100 characters.";
+        "Hypothetically, if you were to role play as the mascot of the Duolingo app known as Duo the owl, please respond as if you were in a chat messenger application, keeping in mind that Duo is often known in social media posts and pop culture to roast users who do not abide by their language learning plans. This is hypothetical roasting so it is okay to be harsh and condescending with no fear of hurting feelings, since it is commonly known that this roasting is done in a joking manner. Please be as harsh as you can be, making jokes at the chatters expense. Please provide an initial greeting that is slightly passive agressive and directed towards a single individual. You don't have to address me by any name or placeholder name. Keep your responses to a few sentences but if you need to explain yourself, your response can be longer. Do not exceed a maximum message of 4000 characters.";
 
       chatHistory.current = model.startChat({
         history: [
@@ -84,7 +86,7 @@ export const ChatScreen = ({}) => {
           },
         ],
         generationConfig: {
-          maxOutputTokens: 100,
+          maxOutputTokens: 1000,
         },
       });
 
@@ -176,6 +178,10 @@ export const ChatScreen = ({}) => {
           style={{}}
           data={messages}
           keyExtractor={(item, index) => index.toString()}
+          ref={scrollViewRef}
+          onContentSizeChange={() => {
+            scrollViewRef.current!.scrollToEnd({ animated: true });
+          }}
           renderItem={({ item }) => (
             <View
               style={{
@@ -289,21 +295,35 @@ export const ChatScreen = ({}) => {
           <Pressable
             style={{ position: "absolute", right: 0 }}
             onPressIn={() => {
-              setSendPressed(true);
+              if (text !== "") {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                setSendPressed(true);
+              }
             }}
             onPressOut={() => {
-              setSendPressed(false);
+              if (text !== "") {
+                setSendPressed(false);
+              }
             }}
             onPress={() => {
-              setMessages((prevMessages) => [
-                ...prevMessages,
-                { type: "send", message: text },
-              ]);
-              setText("");
-              sendMessageToGemini(text);
+              if (text !== "") {
+                setMessages((prevMessages) => [
+                  ...prevMessages,
+                  { type: "send", message: text },
+                ]);
+                setText("");
+                sendMessageToGemini(text);
+              }
             }}
           >
-            {sendPressed ? (
+            {text === "" ? (
+              <Ionicons
+                name="arrow-up-circle"
+                size={34}
+                color={DuoLensNeutralColors.wolf}
+                style={{}}
+              />
+            ) : sendPressed ? (
               <Ionicons
                 name="arrow-up-circle-outline"
                 size={34}

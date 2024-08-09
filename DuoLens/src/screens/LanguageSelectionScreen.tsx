@@ -16,6 +16,7 @@ import { BottomButton } from "../components/BottomButton";
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 
 export const LanguageSelectionScreen = ({}) => {
   const navigation = useNavigation();
@@ -29,11 +30,17 @@ export const LanguageSelectionScreen = ({}) => {
       <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
         <Pressable
           style={{ justifyContent: "center" }}
+          onPressIn={() =>
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+          }
           onPress={() => navigation.navigate("AlbumScreen")}
         >
           <Ionicons name="albums" size={30} color="white" />
         </Pressable>
         <Pressable
+          onPressIn={() =>
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+          }
           onPress={() => setSelected(null)}
           style={{ alignSelf: "center" }}
         >
@@ -41,6 +48,9 @@ export const LanguageSelectionScreen = ({}) => {
         </Pressable>
         <Pressable
           style={{ justifyContent: "center" }}
+          onPressIn={() =>
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+          }
           onPress={() => navigation.navigate("ChatScreen")}
         >
           <Ionicons name="chatbox-ellipses" size={30} color="white" />
