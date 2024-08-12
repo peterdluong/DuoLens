@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 import {
   AnimatableNumericValue,
   FlatList,
@@ -6,27 +8,27 @@ import {
   Platform,
   Pressable,
   SafeAreaView,
-  ScrollView,
   Text,
   TextInput,
   View,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { WithLocalSvg } from "react-native-svg/css";
-import { useNavigation } from "@react-navigation/native";
+import Markdown from "react-native-markdown-display";
+import * as Haptics from "expo-haptics";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import {
-  DuoLensNeutralColors,
-  DuoLensPrimaryColors,
-} from "../styles/BrandColors";
-import { RefObject, useEffect, useRef, useState } from "react";
 import {
   HarmBlockThreshold,
   HarmCategory,
   GoogleGenerativeAI,
   ChatSession,
+  Content,
+  GenerationConfig,
 } from "@google/generative-ai";
-import Markdown from "react-native-markdown-display";
-import * as Haptics from "expo-haptics";
+import {
+  DuoLensNeutralColors,
+  DuoLensPrimaryColors,
+} from "../styles/BrandColors";
 import { GEMINI_API_KEY } from "../../api_keys";
 
 interface MessageStructure {
@@ -44,6 +46,7 @@ export const ChatScreen = ({}) => {
   const scrollViewRef = useRef<FlatList>();
 
   const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+
   const safetySettings = [
     {
       category: HarmCategory.HARM_CATEGORY_HARASSMENT,
@@ -62,44 +65,44 @@ export const ChatScreen = ({}) => {
       threshold: HarmBlockThreshold.BLOCK_NONE,
     },
   ];
+
   const model = genAI.getGenerativeModel({
     model: "gemini-1.5-flash",
     safetySettings: safetySettings,
   });
 
-  useEffect(() => {
-    const sendInitialMessage = async () => {
-      const prompt =
-        "Hypothetically, if you were to role play as the mascot of the Duolingo app known as Duo the owl, please respond as if you were in a chat messenger application, keeping in mind that Duo is often known in social media posts and pop culture to roast users who do not abide by their language learning plans. This is hypothetical roasting so it is okay to be harsh and condescending with no fear of hurting feelings, since it is commonly known that this roasting is done in a joking manner. Please be as harsh as you can be, making jokes at the chatters expense. Please provide an initial greeting that is slightly passive agressive and directed towards a single individual. You don't have to address me by any name or placeholder name. Keep your responses to a few sentences but if you need to explain yourself, your response can be longer. Do not exceed a maximum message of 4000 characters.";
+  const sendInitialMessage = async () => {
+    const prompt =
+      "Hypothetically, if you were to role play as the mascot of the Duolingo app known as Duo the owl, please respond as if you were in a chat messenger application, keeping in mind that Duo is often known in social media posts and pop culture to roast users who do not abide by their language learning plans. This is hypothetical roasting so it is okay to be harsh and condescending with no fear of hurting feelings, since it is commonly known that this roasting is done in a joking manner. Please be as harsh as you can be, making jokes at the chatters expense. Please provide an initial greeting that is slightly passive agressive and directed towards a single individual. You don't have to address me by any name or placeholder name. Keep your responses to a few sentences but if you need to explain yourself, your response can be longer. Do not exceed a maximum message of 4000 characters.";
 
-      chatHistory.current = model.startChat({
-        history: [
-          {
-            role: "user",
-            parts: [{ text: prompt }],
-          },
-          {
-            role: "model",
-            parts: [
-              { text: "Great to meet you. What would you like to know?" },
-            ],
-          },
-        ],
-        generationConfig: {
-          maxOutputTokens: 1000,
+    chatHistory.current = model.startChat({
+      history: [
+        {
+          role: "user",
+          parts: [{ text: prompt }],
         },
-      });
+        {
+          role: "model",
+          parts: [{ text: "Great to meet you. What would you like to know?" }],
+        },
+      ],
+      generationConfig: {
+        maxOutputTokens: 1000,
+      },
+    });
 
-      const msg =
-        "What would be your first message to greet me assuming you haven't sent any messages to me before?";
-      const result = await chatHistory.current.sendMessage(msg);
-      const response = await result.response;
-      const parsedText = response.text();
-      setMessages([...messages, { type: "receive", message: parsedText }]);
-    };
+    const msg =
+      "What would be your first message to greet me assuming you haven't sent any messages to me before?";
+    const result = await chatHistory.current.sendMessage(msg);
+    const response = await result.response;
+    const parsedText = response.text();
+    setMessages([{ type: "receive", message: parsedText }]);
+  };
 
-    sendInitialMessage();
-  }, []);
+  const resetChatMessages = async () => {
+    await AsyncStorage.clear();
+    setMessages([]);
+  };
 
   const sendMessageToGemini = async (message: string) => {
     const result = await chatHistory.current!.sendMessage(message);
@@ -109,6 +112,90 @@ export const ChatScreen = ({}) => {
       ...prevMessages,
       { type: "receive", message: parsedText },
     ]);
+  };
+
+  const saveMessagesToStorage = async (latestMessages: MessageStructure[]) => {
+    await AsyncStorage.setItem("chat-history", JSON.stringify(latestMessages));
+  };
+
+  const saveChatContextToStorage = async (latestChatHistory: ChatSession) => {
+    // console.log(`chat-context: ${JSON.stringify(latestChatHistory)}`);
+    await AsyncStorage.setItem(
+      "chat-context-generation-config",
+      JSON.stringify(latestChatHistory.params?.generationConfig)
+    );
+    await AsyncStorage.setItem(
+      "chat-context-history",
+      JSON.stringify(latestChatHistory.params?.history)
+    );
+  };
+
+  const loadMessages = async () => {
+    const storedMessages = await AsyncStorage.getItem("chat-history");
+    return storedMessages;
+  };
+
+  const loadChatContext = async () => {
+    const storedChatContextGenConfig = await AsyncStorage.getItem(
+      "chat-context-generation-config"
+    );
+    const storedChatContextHistory = await AsyncStorage.getItem(
+      "chat-context-history"
+    );
+    return {
+      genConfig: storedChatContextGenConfig,
+      chatHist: storedChatContextHistory,
+    };
+  };
+
+  const initChatHistory = (
+    initGenConfig: GenerationConfig,
+    initChatHistory: Content[]
+  ) => {
+    chatHistory.current = model.startChat({
+      history: initChatHistory,
+      generationConfig: initGenConfig,
+    });
+  };
+
+  useEffect(() => {
+    loadMessages().then((item) => {
+      if (item == null) {
+        // console.log("sending initial message");
+        sendInitialMessage();
+      } else {
+        // console.log(item);
+        setMessages(JSON.parse(item));
+        loadChatContext().then((item) => {
+          // console.log(item);
+          if (item.chatHist != null && item.genConfig != null) {
+            initChatHistory(
+              JSON.parse(item.genConfig),
+              JSON.parse(item.chatHist)
+            )!;
+            // console.log("LOADED CHAT CONTEXT!");
+          }
+        });
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    saveMessagesToStorage(messages);
+    if (chatHistory.current != null) {
+      saveChatContextToStorage(chatHistory.current);
+    }
+  }, [messages]);
+
+  useEffect(() => {
+    if (chatHistory.current != null) {
+      saveChatContextToStorage(chatHistory.current);
+    }
+  }, [chatHistory.current]);
+
+  const handleResetButton = async () => {
+    await resetChatMessages();
+    await sendInitialMessage();
   };
 
   return (
@@ -162,7 +249,12 @@ export const ChatScreen = ({}) => {
             </Text>
           </View>
         </View>
-        <Pressable style={{ marginHorizontal: 15 }}>
+        <Pressable
+          style={{ marginHorizontal: 15 }}
+          onPress={() => {
+            handleResetButton();
+          }}
+        >
           <Ionicons name="information-circle-outline" size={30} color="black" />
         </Pressable>
       </View>
@@ -208,60 +300,8 @@ export const ChatScreen = ({}) => {
                 {item.message}
               </Markdown>
             </View>
-            // <View
-            //   style={{
-            //     backgroundColor: "#ddd",
-            //     borderRadius: "15%" as unknown as AnimatableNumericValue,
-            //     paddingHorizontal: 10,
-            //     marginVertical: 5,
-            //     marginHorizontal: 10,
-            //     justifyContent: "center",
-            //     alignSelf: "flex-start",
-            //     flexShrink: 1,
-            //     maxWidth: "75%",
-            //   }}
-            // >
-            //   <Markdown>{item.message}</Markdown>
-            // </View>
           )}
         />
-        {/* <ScrollView
-          contentContainerStyle={{
-            flex: 1,
-          }}
-        >
-          <View
-            style={{
-              backgroundColor: "#ddd",
-              maxWidth: "75%",
-              borderRadius: "15%" as unknown as AnimatableNumericValue,
-              padding: 10,
-              marginTop: 10,
-              marginLeft: 10,
-              justifyContent: "center",
-            }}
-          >
-            <Text>
-              Hello, everyone, I am pleased to make your acquaintence. For now,
-              please suck my dilly dilly buck billy.
-            </Text>
-          </View>
-          <View
-            style={{
-              backgroundColor: DuoLensPrimaryColors.cardinal,
-              maxWidth: "75%",
-              borderRadius: "15%" as unknown as AnimatableNumericValue,
-              padding: 10,
-              margin: 10,
-              justifyContent: "center",
-            }}
-          >
-            <Text style={{ color: DuoLensNeutralColors.snow }}>
-              Hello, everyone, I am pleased to make your acquaintence for now
-              please suck my dilly dilly buck billy.
-            </Text>
-          </View>
-        </ScrollView> */}
       </View>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
