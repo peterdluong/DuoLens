@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import {
   AnimatableNumericValue,
@@ -41,7 +41,7 @@ export const ChatScreen = ({}) => {
   const duoOwlAvatar = require("../../assets/duo-owl-waving.svg");
   const [sendPressed, setSendPressed] = useState(false);
   const [messages, setMessages] = useState<MessageStructure[]>([]);
-  const [text, setText] = useState("");
+  const [typedText, setTypedText] = useState("");
   const chatHistory = useRef<ChatSession>()!;
   const scrollViewRef = useRef<FlatList>();
 
@@ -275,31 +275,7 @@ export const ChatScreen = ({}) => {
             scrollViewRef.current!.scrollToEnd({ animated: true });
           }}
           renderItem={({ item }) => (
-            <View
-              style={{
-                backgroundColor:
-                  item.type === "send" ? DuoLensPrimaryColors.cardinal : "#ddd",
-                borderRadius: "15%" as unknown as AnimatableNumericValue,
-                paddingHorizontal: 10,
-                marginVertical: 5,
-                marginHorizontal: 10,
-                justifyContent: "center",
-                alignSelf: item.type === "send" ? "flex-end" : "flex-start",
-                flexShrink: 1,
-                maxWidth: "75%",
-              }}
-            >
-              <Markdown
-                style={{
-                  body: {
-                    color:
-                      item.type === "send" ? DuoLensNeutralColors.snow : "#000",
-                  },
-                }}
-              >
-                {item.message}
-              </Markdown>
-            </View>
+            <MessageBubble type={item.type} message={item.message} />
           )}
         />
       </View>
@@ -326,37 +302,37 @@ export const ChatScreen = ({}) => {
             keyboardType="default"
             placeholder="Write a message"
             style={{ minHeight: 30, fontSize: 16, marginRight: 24 }}
-            value={text}
+            value={typedText}
             textAlignVertical="center"
             onChangeText={(newText) => {
-              setText(newText);
+              setTypedText(newText);
             }}
           ></TextInput>
           <Pressable
             style={{ position: "absolute", right: 0 }}
             onPressIn={() => {
-              if (text !== "") {
+              if (typedText !== "") {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                 setSendPressed(true);
               }
             }}
             onPressOut={() => {
-              if (text !== "") {
+              if (typedText !== "") {
                 setSendPressed(false);
               }
             }}
             onPress={() => {
-              if (text !== "") {
+              if (typedText !== "") {
                 setMessages((prevMessages) => [
                   ...prevMessages,
-                  { type: "send", message: text },
+                  { type: "send", message: typedText },
                 ]);
-                setText("");
-                sendMessageToGemini(text);
+                setTypedText("");
+                sendMessageToGemini(typedText);
               }
             }}
           >
-            {text === "" ? (
+            {typedText === "" ? (
               <Ionicons
                 name="arrow-up-circle"
                 size={34}
@@ -384,3 +360,32 @@ export const ChatScreen = ({}) => {
     </SafeAreaView>
   );
 };
+
+const MessageBubble = React.memo(({ type, message }: MessageStructure) => {
+  return (
+    <View
+      style={{
+        backgroundColor:
+          type === "send" ? DuoLensPrimaryColors.cardinal : "#ddd",
+        borderRadius: "15%" as unknown as AnimatableNumericValue,
+        paddingHorizontal: 10,
+        marginVertical: 5,
+        marginHorizontal: 10,
+        justifyContent: "center",
+        alignSelf: type === "send" ? "flex-end" : "flex-start",
+        flexShrink: 1,
+        maxWidth: "75%",
+      }}
+    >
+      <Markdown
+        style={{
+          body: {
+            color: type === "send" ? DuoLensNeutralColors.snow : "#000",
+          },
+        }}
+      >
+        {message}
+      </Markdown>
+    </View>
+  );
+});
