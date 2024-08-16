@@ -16,6 +16,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { WithLocalSvg } from "react-native-svg/css";
 import Markdown from "react-native-markdown-display";
 import * as Haptics from "expo-haptics";
+import * as Speech from "expo-speech";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {
   HarmBlockThreshold,
@@ -42,6 +43,7 @@ export const ChatScreen = ({}) => {
   const [sendPressed, setSendPressed] = useState(false);
   const [messages, setMessages] = useState<MessageStructure[]>([]);
   const [typedText, setTypedText] = useState("");
+  const [voiceOption, setVoiceOption] = useState<Speech.Voice>();
   const chatHistory = useRef<ChatSession>()!;
   const scrollViewRef = useRef<FlatList>();
 
@@ -158,7 +160,36 @@ export const ChatScreen = ({}) => {
     });
   };
 
+  const fetchVoices = async () => {
+    const availableVoices = await Speech.getAvailableVoicesAsync();
+    console.log(
+      availableVoices.filter(
+        (item) =>
+          item.language === "en-US" &&
+          item.quality === Speech.VoiceQuality.Enhanced
+      )
+    ); // Check the console for available voices
+    const filteredVoices = availableVoices.filter(
+      (item) => item.name.includes("Alex") || item.name.includes("Samantha")
+    );
+    if (filteredVoices.filter((item) => item.name.includes("Alex"))) {
+      setVoiceOption(
+        filteredVoices.filter((item) => item.name.includes("Alex"))[0]
+      );
+      console.log(
+        `Currently using ${
+          filteredVoices.filter((item) => item.name.includes("Alex"))[0]
+            .identifier
+        }`
+      );
+    } else {
+      setVoiceOption(filteredVoices[0]);
+      console.log(`Currently using ${filteredVoices[0].identifier}`);
+    }
+  };
+
   useEffect(() => {
+    fetchVoices();
     loadMessages().then((item) => {
       if (item == null) {
         // console.log("sending initial message");
@@ -178,6 +209,7 @@ export const ChatScreen = ({}) => {
         });
       }
     });
+    // fetchVoices();
   }, []);
 
   useEffect(() => {
@@ -267,7 +299,7 @@ export const ChatScreen = ({}) => {
         }}
       >
         <FlatList
-          style={{}}
+          style={{ flexDirection: "column", flex: 1, width: "100%" }}
           data={messages}
           keyExtractor={(item, index) => index.toString()}
           ref={scrollViewRef}
@@ -275,7 +307,11 @@ export const ChatScreen = ({}) => {
             scrollViewRef.current!.scrollToEnd({ animated: true });
           }}
           renderItem={({ item }) => (
-            <MessageBubble type={item.type} message={item.message} />
+            <MessageBubble
+              type={item.type}
+              message={item.message}
+              voice={voiceOption!}
+            />
           )}
         />
       </View>
@@ -361,55 +397,121 @@ export const ChatScreen = ({}) => {
   );
 };
 
-const MessageBubble = React.memo(({ type, message }: MessageStructure) => {
-  const rules = {
-    textgroup: (
-      node: any,
-      children: any,
-      parent: any,
-      myStyles: any,
-      inheritedStyles = {}
-    ) => {
-      return (
-        <TextInput
-          scrollEnabled={false}
-          editable={false}
-          readOnly
-          multiline
-          key={node.key}
-          style={[inheritedStyles, { userSelect: "text", padding: 0 }]}
-          selectionColor={DuoLensPrimaryColors.feathergreen}
-        >
-          {children}
-        </TextInput>
-      );
-    },
-  };
-  return (
-    <View
-      style={{
-        backgroundColor:
-          type === "send" ? DuoLensPrimaryColors.cardinal : "#ddd",
-        borderRadius: "15%" as unknown as AnimatableNumericValue,
-        paddingHorizontal: 10,
-        marginVertical: 5,
-        marginHorizontal: 10,
-        justifyContent: "center",
-        alignSelf: type === "send" ? "flex-end" : "flex-start",
-        flexShrink: 1,
-        maxWidth: "75%",
-      }}
-    >
-      <Markdown
-        rules={rules}
-        style={{
-          body: {
-            color: type === "send" ? DuoLensNeutralColors.snow : "#000",
+const MessageBubble = React.memo(
+  ({
+    type,
+    message,
+    voice,
+  }: {
+    type: "send" | "receive";
+    message: string;
+    voice: Speech.Voice;
+  }) => {
+    const textInputRef = useRef<TextInput>();
+    const [isPlaying, setPlaying] = useState(false);
+
+    const rules = {
+      textgroup: (
+        node: any,
+        children: any,
+        parent: any,
+        myStyles: any,
+        inheritedStyles = {}
+      ) => {
+        return (
+          <TextInput
+            scrollEnabled={false}
+            editable={false}
+            readOnly
+            multiline
+            ref={textInputRef}
+            key={node.key}
+            style={[inheritedStyles, { userSelect: "text", padding: 0 }]}
+            selectionColor={DuoLensPrimaryColors.feathergreen}
+            onBlur={() => {
+              textInputRef.current?.blur();
+            }}
+          >
+            {children}
+          </TextInput>
+        );
+      },
+    };
+
+    const onPressHandler = () => {
+      if (isPlaying) {
+        setPlaying(false);
+        Speech.stop();
+      } else {
+        Speech.stop();
+        setPlaying(true);
+        Speech.speak(message, {
+          onDone: () => {
+            setPlaying(false);
           },
+          // voice: "com.apple.speech.synthesis.voice.Alex",
+          voice: voice.identifier,
+          rate: 1.1,
+        });
+      }
+    };
+
+    const SpeechButton = () => {
+      return (
+        <Pressable
+          style={{
+            flexShrink: 1,
+            borderRadius: "15%" as unknown as AnimatableNumericValue,
+            width: 30,
+            // height: 30,
+            alignSelf: "center",
+          }}
+          onPress={onPressHandler}
+        >
+          <Ionicons
+            name={isPlaying ? "pause-circle-outline" : "play-circle-outline"}
+            size={30}
+            color={DuoLensPrimaryColors.cardinal}
+          />
+        </Pressable>
+      );
+    };
+
+    return (
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: type === "send" ? "flex-end" : "flex-start",
         }}
       >
-        {message}
-      </Markdown>
-    </View>
-  );
-});
+        {type === "send" && <SpeechButton />}
+        <View
+          style={{
+            backgroundColor:
+              type === "send" ? DuoLensPrimaryColors.cardinal : "#ddd",
+            borderRadius: "15%" as unknown as AnimatableNumericValue,
+            paddingHorizontal: 10,
+            marginVertical: 5,
+            marginHorizontal: 10,
+            justifyContent: "center",
+            alignSelf: type === "send" ? "flex-end" : "flex-start",
+            flexShrink: 1,
+            maxWidth: "75%",
+          }}
+        >
+          <Markdown
+            rules={rules}
+            style={{
+              body: {
+                color: type === "send" ? DuoLensNeutralColors.snow : "#000",
+              },
+            }}
+          >
+            {message}
+          </Markdown>
+        </View>
+        {type === "receive" && <SpeechButton />}
+      </View>
+    );
+  }
+);
