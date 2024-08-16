@@ -438,6 +438,31 @@ const MessageBubble = React.memo(
       },
     };
 
+    const removeMarkdown = (mdText: string) => {
+      return (
+        mdText
+          // Remove headers
+          .replace(/^#+\s+/gm, "")
+          // Remove bold and italic (retain text inside)
+          .replace(/(\*\*|__)(.*?)\1/g, "$2")
+          .replace(/(\*|_)(.*?)\1/g, "$2")
+          // Remove strikethrough (retain text inside)
+          .replace(/~~(.*?)~~/g, "$1")
+          // Remove code (inline and block, retain text inside)
+          .replace(/`{1,3}(.*?)`{1,3}/g, "$1")
+          // Remove links (retain link text)
+          .replace(/\[([^\]]+?)\]\(.*?\)/g, "$1")
+          // Remove images (retain alt text)
+          .replace(/!\[([^\]]+?)\]\(.*?\)/g, "$1")
+          // Remove lists (retain text in list items)
+          .replace(/^\s*[\*\-\+\d\.\s]+/gm, "")
+          // Remove blockquotes (retain text)
+          .replace(/^>\s+/gm, "")
+          // Remove horizontal rules (retain surrounding text)
+          .replace(/^\s*[-*]{3,}\s*$/gm, "")
+      );
+    };
+
     const onPressHandler = () => {
       if (isPlaying) {
         setPlaying(false);
@@ -445,7 +470,7 @@ const MessageBubble = React.memo(
       } else {
         Speech.stop();
         setPlaying(true);
-        Speech.speak(message, {
+        Speech.speak(removeMarkdown(message), {
           onDone: () => {
             setPlaying(false);
           },
@@ -507,7 +532,7 @@ const MessageBubble = React.memo(
               },
             }}
           >
-            {message}
+            {message.replace(/ {2}/g, " ")}
           </Markdown>
         </View>
         {type === "receive" && <SpeechButton />}
