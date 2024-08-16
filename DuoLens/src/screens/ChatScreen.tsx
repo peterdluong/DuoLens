@@ -362,6 +362,29 @@ export const ChatScreen = ({}) => {
 };
 
 const MessageBubble = React.memo(({ type, message }: MessageStructure) => {
+  const rules = {
+    textgroup: (
+      node: any,
+      children: any,
+      parent: any,
+      myStyles: any,
+      inheritedStyles = {}
+    ) => {
+      return (
+        <TextInput
+          scrollEnabled={false}
+          editable={false}
+          readOnly
+          multiline
+          key={node.key}
+          style={[inheritedStyles, { userSelect: "text", padding: 0 }]}
+          selectionColor={DuoLensPrimaryColors.feathergreen}
+        >
+          {children}
+        </TextInput>
+      );
+    },
+  };
   return (
     <View
       style={{
@@ -378,6 +401,7 @@ const MessageBubble = React.memo(({ type, message }: MessageStructure) => {
       }}
     >
       <Markdown
+        rules={rules}
         style={{
           body: {
             color: type === "send" ? DuoLensNeutralColors.snow : "#000",
