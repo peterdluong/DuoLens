@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { WithLocalSvg } from "react-native-svg/css";
+import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import Markdown from "react-native-markdown-display";
 import * as Haptics from "expo-haptics";
 import * as Speech from "expo-speech";
@@ -31,11 +32,14 @@ import {
   DuoLensPrimaryColors,
 } from "../styles/BrandColors";
 import { GEMINI_API_KEY } from "../../api_keys";
+import { BottomButton } from "../components/BottomButton";
 
 interface MessageStructure {
   type: "send" | "receive";
   message: string;
 }
+
+type TtsModeType = "disabled" | "manual" | "auto";
 
 export const ChatScreen = ({}) => {
   const navigation = useNavigation();
@@ -44,8 +48,10 @@ export const ChatScreen = ({}) => {
   const [messages, setMessages] = useState<MessageStructure[]>([]);
   const [typedText, setTypedText] = useState("");
   const [voiceOption, setVoiceOption] = useState<Speech.Voice>();
+  const [ttsMode, setTtsMode] = useState<TtsModeType>("disabled");
   const chatHistory = useRef<ChatSession>()!;
   const scrollViewRef = useRef<FlatList>();
+  const actionSheetRef = useRef<ActionSheetRef>(null);
 
   const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
@@ -102,7 +108,11 @@ export const ChatScreen = ({}) => {
   };
 
   const resetChatMessages = async () => {
-    await AsyncStorage.clear();
+    await AsyncStorage.multiRemove([
+      "chat-history",
+      "chat-context-generation-config",
+      "chat-context-history",
+    ]);
     setMessages([]);
   };
 
@@ -176,15 +186,8 @@ export const ChatScreen = ({}) => {
       setVoiceOption(
         filteredVoices.filter((item) => item.name.includes("Alex"))[0]
       );
-      console.log(
-        `Currently using ${
-          filteredVoices.filter((item) => item.name.includes("Alex"))[0]
-            .identifier
-        }`
-      );
     } else {
       setVoiceOption(filteredVoices[0]);
-      console.log(`Currently using ${filteredVoices[0].identifier}`);
     }
   };
 
@@ -284,18 +287,19 @@ export const ChatScreen = ({}) => {
         <Pressable
           style={{ marginHorizontal: 15 }}
           onPress={() => {
-            handleResetButton();
+            // handleResetButton();
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            actionSheetRef.current?.show();
           }}
         >
           <Ionicons name="information-circle-outline" size={30} color="black" />
         </Pressable>
       </View>
-      <View
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
         onTouchMove={() => {
           Keyboard.dismiss();
-        }}
-        style={{
-          flex: 1,
         }}
       >
         <FlatList
@@ -306,6 +310,9 @@ export const ChatScreen = ({}) => {
           onContentSizeChange={() => {
             scrollViewRef.current!.scrollToEnd({ animated: true });
           }}
+          onLayout={() => {
+            scrollViewRef.current!.scrollToEnd({ animated: true });
+          }}
           renderItem={({ item }) => (
             <MessageBubble
               type={item.type}
@@ -314,7 +321,7 @@ export const ChatScreen = ({}) => {
             />
           )}
         />
-      </View>
+      </KeyboardAvoidingView>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{
@@ -393,6 +400,129 @@ export const ChatScreen = ({}) => {
           </Pressable>
         </View>
       </KeyboardAvoidingView>
+      <ActionSheet
+        ref={actionSheetRef}
+        containerStyle={{ paddingHorizontal: "5%", backgroundColor: "#f2f2f2" }}
+      >
+        <View style={{ marginTop: "5%" }}>
+          <Text style={{ color: "#777" }}>TEXT-TO-SPEECH ACCESSIBILITY</Text>
+        </View>
+        <View
+          style={{
+            backgroundColor: "#fff",
+            borderRadius: "15%" as unknown as AnimatableNumericValue,
+            borderColor: "#ddd",
+            borderWidth: 1,
+            marginTop: "2.5%",
+          }}
+        >
+          <Pressable
+            style={{
+              flexDirection: "row",
+              height: 50,
+              alignItems: "center",
+              borderBottomColor: "#ddd",
+              borderBottomWidth: 1,
+              marginHorizontal: "3%",
+            }}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setTtsMode("disabled");
+            }}
+          >
+            <View style={{ width: "15%", alignItems: "center" }}>
+              {ttsMode == "disabled" && (
+                <Ionicons
+                  name={"checkmark"}
+                  size={24}
+                  color={DuoLensPrimaryColors.macaw}
+                ></Ionicons>
+              )}
+            </View>
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+              }}
+            >
+              <Text>Disabled</Text>
+            </View>
+          </Pressable>
+          <Pressable
+            style={{
+              flexDirection: "row",
+              height: 50,
+              alignItems: "center",
+              borderBottomColor: "#ddd",
+              borderBottomWidth: 1,
+              marginHorizontal: "3%",
+            }}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setTtsMode("manual");
+            }}
+          >
+            <View style={{ width: "15%", alignItems: "center" }}>
+              {ttsMode == "manual" && (
+                <Ionicons
+                  name={"checkmark"}
+                  size={24}
+                  color={DuoLensPrimaryColors.macaw}
+                ></Ionicons>
+              )}
+            </View>
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+              }}
+            >
+              <Text>Manual Dictation</Text>
+            </View>
+          </Pressable>
+          <Pressable
+            style={{
+              flexDirection: "row",
+              height: 50,
+              alignItems: "center",
+              marginHorizontal: "3%",
+            }}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setTtsMode("auto");
+            }}
+          >
+            <View style={{ width: "15%", alignItems: "center" }}>
+              {ttsMode == "auto" && (
+                <Ionicons
+                  name={"checkmark"}
+                  size={24}
+                  color={DuoLensPrimaryColors.macaw}
+                ></Ionicons>
+              )}
+            </View>
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+              }}
+            >
+              <Text>Auto Dictation</Text>
+            </View>
+          </Pressable>
+        </View>
+        <View style={{ marginBottom: "10%", marginTop: "5%" }}>
+          <BottomButton
+            enabled={true}
+            text="Nuke Chat 🚀"
+            type="red"
+            onPressAction={() => {
+              handleResetButton();
+              actionSheetRef.current?.hide();
+            }}
+          />
+        </View>
+      </ActionSheet>
     </SafeAreaView>
   );
 };
@@ -464,6 +594,7 @@ const MessageBubble = React.memo(
     };
 
     const onPressHandler = () => {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       if (isPlaying) {
         setPlaying(false);
         Speech.stop();
@@ -474,8 +605,7 @@ const MessageBubble = React.memo(
           onDone: () => {
             setPlaying(false);
           },
-          // voice: "com.apple.speech.synthesis.voice.Alex",
-          voice: voice.identifier,
+          voice: voice != null ? voice.identifier : "",
           rate: 1.1,
         });
       }
