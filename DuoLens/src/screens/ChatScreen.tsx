@@ -160,6 +160,13 @@ export const ChatScreen = ({}) => {
     };
   };
 
+  const loadSettings = async () => {
+    const storedSettings = (await AsyncStorage.getItem(
+      "settings-tts"
+    )) as TtsModeType;
+    return storedSettings;
+  };
+
   const initChatHistory = (
     initGenConfig: GenerationConfig,
     initChatHistory: Content[]
@@ -172,13 +179,13 @@ export const ChatScreen = ({}) => {
 
   const fetchVoices = async () => {
     const availableVoices = await Speech.getAvailableVoicesAsync();
-    console.log(
-      availableVoices.filter(
-        (item) =>
-          item.language === "en-US" &&
-          item.quality === Speech.VoiceQuality.Enhanced
-      )
-    ); // Check the console for available voices
+    // console.log(
+    //   availableVoices.filter(
+    //     (item) =>
+    //       item.language === "en-US" &&
+    //       item.quality === Speech.VoiceQuality.Enhanced
+    //   )
+    // ); // Check the console for available voices
     const filteredVoices = availableVoices.filter(
       (item) => item.name.includes("Alex") || item.name.includes("Samantha")
     );
@@ -193,6 +200,11 @@ export const ChatScreen = ({}) => {
 
   useEffect(() => {
     fetchVoices();
+    loadSettings().then((item: TtsModeType) => {
+      if (item != null) {
+        setTtsMode(item);
+      }
+    });
     loadMessages().then((item) => {
       if (item == null) {
         // console.log("sending initial message");
@@ -212,7 +224,6 @@ export const ChatScreen = ({}) => {
         });
       }
     });
-    // fetchVoices();
   }, []);
 
   useEffect(() => {
@@ -318,6 +329,7 @@ export const ChatScreen = ({}) => {
               type={item.type}
               message={item.message}
               voice={voiceOption!}
+              ttsMode={ttsMode}
             />
           )}
         />
@@ -428,6 +440,7 @@ export const ChatScreen = ({}) => {
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               setTtsMode("disabled");
+              AsyncStorage.setItem("settings-tts", "disabled");
             }}
           >
             <View style={{ width: "15%", alignItems: "center" }}>
@@ -460,6 +473,7 @@ export const ChatScreen = ({}) => {
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               setTtsMode("manual");
+              AsyncStorage.setItem("settings-tts", "manual");
             }}
           >
             <View style={{ width: "15%", alignItems: "center" }}>
@@ -490,6 +504,7 @@ export const ChatScreen = ({}) => {
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               setTtsMode("auto");
+              AsyncStorage.setItem("settings-tts", "auto");
             }}
           >
             <View style={{ width: "15%", alignItems: "center" }}>
@@ -532,10 +547,12 @@ const MessageBubble = React.memo(
     type,
     message,
     voice,
+    ttsMode,
   }: {
     type: "send" | "receive";
     message: string;
     voice: Speech.Voice;
+    ttsMode: TtsModeType;
   }) => {
     const textInputRef = useRef<TextInput>();
     const [isPlaying, setPlaying] = useState(false);
@@ -613,22 +630,24 @@ const MessageBubble = React.memo(
 
     const SpeechButton = () => {
       return (
-        <Pressable
-          style={{
-            flexShrink: 1,
-            borderRadius: "15%" as unknown as AnimatableNumericValue,
-            width: 30,
-            // height: 30,
-            alignSelf: "center",
-          }}
-          onPress={onPressHandler}
-        >
-          <Ionicons
-            name={isPlaying ? "pause-circle-outline" : "play-circle-outline"}
-            size={30}
-            color={DuoLensPrimaryColors.cardinal}
-          />
-        </Pressable>
+        ttsMode !== "disabled" && (
+          <Pressable
+            style={{
+              flexShrink: 1,
+              borderRadius: "15%" as unknown as AnimatableNumericValue,
+              width: 30,
+              // height: 30,
+              alignSelf: "center",
+            }}
+            onPress={onPressHandler}
+          >
+            <Ionicons
+              name={isPlaying ? "pause-circle-outline" : "play-circle-outline"}
+              size={30}
+              color={DuoLensPrimaryColors.cardinal}
+            />
+          </Pressable>
+        )
       );
     };
 
