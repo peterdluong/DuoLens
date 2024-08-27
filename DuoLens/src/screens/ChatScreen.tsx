@@ -41,6 +41,31 @@ interface MessageStructure {
 
 type TtsModeType = "disabled" | "manual" | "auto";
 
+const removeMarkdown = (mdText: string) => {
+  return (
+    mdText
+      // Remove headers
+      .replace(/^#+\s+/gm, "")
+      // Remove bold and italic (retain text inside)
+      .replace(/(\*\*|__)(.*?)\1/g, "$2")
+      .replace(/(\*|_)(.*?)\1/g, "$2")
+      // Remove strikethrough (retain text inside)
+      .replace(/~~(.*?)~~/g, "$1")
+      // Remove code (inline and block, retain text inside)
+      .replace(/`{1,3}(.*?)`{1,3}/g, "$1")
+      // Remove links (retain link text)
+      .replace(/\[([^\]]+?)\]\(.*?\)/g, "$1")
+      // Remove images (retain alt text)
+      .replace(/!\[([^\]]+?)\]\(.*?\)/g, "$1")
+      // Remove lists (retain text in list items)
+      .replace(/^\s*[\*\-\+\d\.\s]+/gm, "")
+      // Remove blockquotes (retain text)
+      .replace(/^>\s+/gm, "")
+      // Remove horizontal rules (retain surrounding text)
+      .replace(/^\s*[-*]{3,}\s*$/gm, "")
+  );
+};
+
 export const ChatScreen = ({}) => {
   const navigation = useNavigation();
   const duoOwlAvatar = require("../../assets/duo-owl-waving.svg");
@@ -120,6 +145,13 @@ export const ChatScreen = ({}) => {
     const result = await chatHistory.current!.sendMessage(message);
     const response = await result.response;
     const parsedText = response.text();
+    if (ttsMode == "auto") {
+      Speech.stop();
+      Speech.speak(removeMarkdown(parsedText), {
+        voice: voiceOption != null ? voiceOption.identifier : "",
+        rate: 1.1,
+      });
+    }
     setMessages((prevMessages) => [
       ...prevMessages,
       { type: "receive", message: parsedText },
@@ -441,6 +473,7 @@ export const ChatScreen = ({}) => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               setTtsMode("disabled");
               AsyncStorage.setItem("settings-tts", "disabled");
+              Speech.stop();
             }}
           >
             <View style={{ width: "15%", alignItems: "center" }}>
@@ -474,6 +507,11 @@ export const ChatScreen = ({}) => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               setTtsMode("manual");
               AsyncStorage.setItem("settings-tts", "manual");
+              Speech.stop();
+              Speech.speak("Manual Dictation", {
+                voice: voiceOption != null ? voiceOption.identifier : "",
+                rate: 1,
+              });
             }}
           >
             <View style={{ width: "15%", alignItems: "center" }}>
@@ -505,6 +543,11 @@ export const ChatScreen = ({}) => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               setTtsMode("auto");
               AsyncStorage.setItem("settings-tts", "auto");
+              Speech.stop();
+              Speech.speak("Automatic Dictation", {
+                voice: voiceOption != null ? voiceOption.identifier : "",
+                rate: 1,
+              });
             }}
           >
             <View style={{ width: "15%", alignItems: "center" }}>
@@ -583,31 +626,6 @@ const MessageBubble = React.memo(
           </TextInput>
         );
       },
-    };
-
-    const removeMarkdown = (mdText: string) => {
-      return (
-        mdText
-          // Remove headers
-          .replace(/^#+\s+/gm, "")
-          // Remove bold and italic (retain text inside)
-          .replace(/(\*\*|__)(.*?)\1/g, "$2")
-          .replace(/(\*|_)(.*?)\1/g, "$2")
-          // Remove strikethrough (retain text inside)
-          .replace(/~~(.*?)~~/g, "$1")
-          // Remove code (inline and block, retain text inside)
-          .replace(/`{1,3}(.*?)`{1,3}/g, "$1")
-          // Remove links (retain link text)
-          .replace(/\[([^\]]+?)\]\(.*?\)/g, "$1")
-          // Remove images (retain alt text)
-          .replace(/!\[([^\]]+?)\]\(.*?\)/g, "$1")
-          // Remove lists (retain text in list items)
-          .replace(/^\s*[\*\-\+\d\.\s]+/gm, "")
-          // Remove blockquotes (retain text)
-          .replace(/^>\s+/gm, "")
-          // Remove horizontal rules (retain surrounding text)
-          .replace(/^\s*[-*]{3,}\s*$/gm, "")
-      );
     };
 
     const onPressHandler = () => {
